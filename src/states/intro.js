@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { switchState } from "../utils";
 
 var content = [
   "You have been late getting back from lunch every day this week.",
@@ -25,6 +26,13 @@ export default class extends Phaser.State {
     text = game.add.text(32, 32, "", { font: "25px Arial", fill: "#777777" });
     console.log(lineIndex, content.length);
     this.nextLine();
+  }
+
+  update() {
+    if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+      console.log("switch", game.state);
+      switchState();
+    }
   }
 
   nextLine() {
