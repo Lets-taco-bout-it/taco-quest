@@ -31,8 +31,6 @@ export default class extends Phaser.State {
     background.scale.setTo(1.5, 1.5);
     background.tint = 0x777777;
 
-
-
     game.add.text(0, 0, `${game.state.current}`);
     var style = {
       font: "bold 50px Roboto Mono",
@@ -65,20 +63,12 @@ export default class extends Phaser.State {
 
     music = game.add.audio("themeSong");
     music.play();
-
-   
-
-
+  }
 
   update() {
-
-
     if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
       console.log("switch", game.state);
       switchState();
     }
-
-
-
   }
 }
