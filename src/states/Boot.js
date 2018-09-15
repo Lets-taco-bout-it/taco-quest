@@ -34,7 +34,7 @@ export default class extends Phaser.State {
     guy.body.collideWorldBounds = true;
     guy.body.gravity.y = 800;
 
-    game.add.text(0, 0, "Boot");
+    game.add.text(0, 0, `${game.state.current}`);
 
     // game.camera.deadzone = new Phaser.Rectangle(centerX - 400, 0, 600, 700);
   }

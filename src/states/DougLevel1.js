@@ -19,7 +19,7 @@ export default class extends Phaser.State {
 
   create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.world.setBounds(0, 0, 1400, 600);
+    game.world.setBounds(0, 0, 2800, 560);
 
     background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
     background.anchor.setTo(0, 0.51);
@@ -34,7 +34,7 @@ export default class extends Phaser.State {
     guy.body.collideWorldBounds = true;
     guy.body.gravity.y = 800;
 
-    game.add.text(0, 0, "DougLevel");
+    game.add.text(0, 0, `${game.state.current}`);
 
     // game.camera.deadzone = new Phaser.Rectangle(centerX - 400, 0, 600, 700);
   }
@@ -45,22 +45,18 @@ export default class extends Phaser.State {
 
     guy.animations.play("walk", 14, true);
 
+    if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && guy.body.onFloor()) {
+      guy.body.velocity.y = -400;
+    }
     if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
       guy.scale.setTo(2, 2);
       guy.x += speed;
       // guy.animations.play("walk", 14, true);
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
       guy.scale.setTo(-2, 2);
-      guy.x -= speed;
+      guy.x -= speed * 3;
       // guy.animations.play("walk", 14, true);
-    } else if (
-      game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
-      guy.body.onFloor()
-    ) {
-      guy.body.velocity.y = -400;
-    }
-
-    if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+    } else if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
       console.log("switch", game.state);
       switchState();
     }
