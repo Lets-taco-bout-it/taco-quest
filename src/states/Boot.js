@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { switchState } from "../utils";
 
 var centerX = 800 / 2,
   centerY = 600 / 2,
@@ -18,7 +19,7 @@ export default class extends Phaser.State {
 
   create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.world.setBounds(0, 0, 1400, 600);
+    game.world.setBounds(0, 0, 1400, 560);
 
     background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
     background.anchor.setTo(0, 0.51);
@@ -31,6 +32,9 @@ export default class extends Phaser.State {
     game.camera.follow(guy);
     game.physics.enable(guy);
     guy.body.collideWorldBounds = true;
+    guy.body.gravity.y = 800;
+
+    game.add.text(0, 0, "Boot");
 
     // game.camera.deadzone = new Phaser.Rectangle(centerX - 400, 0, 600, 700);
   }
@@ -49,9 +53,16 @@ export default class extends Phaser.State {
       guy.scale.setTo(-2, 2);
       guy.x -= speed;
       // guy.animations.play("walk", 14, true);
-    } else {
-      // guy.animations.stop("walk");
-      // guy.frame = 0;
+    } else if (
+      game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
+      guy.body.onFloor()
+    ) {
+      guy.body.velocity.y = -400;
+    }
+
+    if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+      console.log("switch", game.state);
+      switchState();
     }
   }
 }
