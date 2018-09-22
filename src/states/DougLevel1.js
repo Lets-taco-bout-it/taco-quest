@@ -161,11 +161,11 @@ export default class extends Phaser.State {
     //sets(x corner to half of the guy position)
     game.world.setBounds(guy.position.x / 2, 0, 2000, 560);
 
-    //Stop scroll
-    // background.tilePosition.x = 0;
-
     //create office building at end of world
     office = game.add.image(1900, -10, "office");
+
+    //Stop scroll
+    // background.tilePosition.x = 0;
 
     //timer to switch state
   }
