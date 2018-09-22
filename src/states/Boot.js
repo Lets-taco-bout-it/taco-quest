@@ -8,7 +8,8 @@ var centerX = 800 / 2,
   speed = 4,
   welcomeText,
   startBtn,
-  music;
+  music,
+  music2;
 
 export default class extends Phaser.State {
   constructor() {
@@ -20,6 +21,7 @@ export default class extends Phaser.State {
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
     game.load.spritesheet("start", "src/assets/playButtonSheet.png", 209, 96);
     game.load.audio("themeSong", "src/assets/sounds/themesong.wav");
+    game.load.audio("gameSong", "src/assets/sounds/gameSong.wav");
   }
 
   create() {

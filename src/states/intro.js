@@ -16,19 +16,44 @@ var wordDelay = 120;
 var lineDelay = 400;
 var text;
 var nextLine;
+var CityBG;
+var background;
+var endScroll;
+var tilePosition;
+var scroll = false;
 
 export default class extends Phaser.State {
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
   }
+
   create() {
-    game.add.image(0, 0, "CityBG");
+    background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
+    background.anchor.setTo(0, 0);
+    background.scale.setTo(1.5, 1.5);
+
+    // game.add.image(0, 0, "CityBG");
     text = game.add.text(32, 32, "", { font: "25px Arial", fill: "#777777" });
     console.log(lineIndex, content.length);
+    // game.input.onDown.add(this.startZoom);
+    // game.input.onDown.add(this.stopZoom);
     this.nextLine();
   }
 
   update() {
+    // if ( === content.length -1) {
+    //   startScroll;
+    // }
+
+    if (scroll === true) {
+      background.tilePosition.y -= 2;
+
+      if (background.tilePosition.y <= -551) {
+        scroll = false;
+        // return background.anchor.setTo(0, 0.51);
+      }
+    }
+
     if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
       console.log("switch", game.state);
       switchState();
@@ -37,8 +62,8 @@ export default class extends Phaser.State {
 
   nextLine() {
     if (lineIndex === content.length) {
-      console.log("exiting next line");
-      //  We're finished
+      content = [];
+      scroll = true;
       return;
     }
 
@@ -71,4 +96,7 @@ export default class extends Phaser.State {
       game.time.events.add(lineDelay, this.nextLine, this);
     }
   }
+  // render() {
+  //   game.debug.cameraInfo(game.camera, 32, 32);
+  // }
 }

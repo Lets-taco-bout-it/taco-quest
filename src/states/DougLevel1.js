@@ -12,6 +12,7 @@ var centerX = windowWidth / 2,
   scoreText,
   office,
   score = 0,
+  cursors,
   speed = 4;
 
 export default class extends Phaser.State {
@@ -39,6 +40,7 @@ export default class extends Phaser.State {
     background = game.add.tileSprite(-500, 0, 5000, 1080, "CityBG");
     background.anchor.setTo(0, 0.51);
     background.scale.setTo(1.5, 1.5);
+    console.log(background.tilePosition.y);
 
     //Guy
     guy = game.add.sprite(100, 525, "guy");
