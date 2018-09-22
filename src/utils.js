@@ -4,7 +4,7 @@ export const centerGameObjects = objects => {
   });
 };
 export const switchState = () => {
-  const possStates = ["Boot", "intro", "DougLevel1"];
+  const possStates = ["Boot", "intro", "DougLevel1", "MegLevel1"];
   const index = possStates.indexOf(game.state.current);
 
   if (possStates.length - 1 === index) return game.state.start(possStates[0]);

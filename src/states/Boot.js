@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { switchState } from "../utils";
+import { switchState, toggleMute } from "../utils";
 
 var centerX = 800 / 2,
   centerY = 600 / 2,
@@ -13,22 +13,14 @@ var centerX = 800 / 2,
 export default class extends Phaser.State {
   constructor() {
     super();
-    //keep track of variables here
-    // console.log("sound", sound);
   }
+
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
     game.load.spritesheet("start", "src/assets/playButtonSheet.png", 209, 96);
     game.load.audio("themeSong", "src/assets/sounds/themesong.wav");
-
     game.load.spritesheet("mute", "/src/assets/soundToggleSheet.png", 96, 96);
-    game.load.spritesheet(
-      "pause-play",
-      "/src/assets/pausePlayToggleSheet.png",
-      30,
-      30
-    );
   }
 
   create() {
@@ -89,6 +81,7 @@ export default class extends Phaser.State {
     }
 
     //MUTE-UNMUTE TOGGLE BUTTON
+
     let toggleMute = () => {
       if (sound) {
         sound = !sound;
