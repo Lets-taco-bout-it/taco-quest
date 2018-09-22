@@ -45,7 +45,7 @@ export default class extends Phaser.State {
     trashCans.outOfBoundsKill = true;
     this.makeTrash();
 
-    // trashCans.body.immovable = true;
+    trashCans.body.immovable = true;
     // trashCans.body.velocity.x = -2;
 
     game.add.text(0, 0, `${game.state.current}`);
@@ -67,7 +67,7 @@ export default class extends Phaser.State {
     if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
       guy.scale.setTo(2, 2);
       console.log(trashCans, guy);
-      guy.x += speed;
+      guy.body.velocity.x += speed;
       // guy.animations.play("walk", 14, true);
     } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
       guy.scale.setTo(-2, 2);
@@ -84,6 +84,8 @@ export default class extends Phaser.State {
       trash = trashCans.create(Math.random() * 2800, 500, "trash");
       trash.scale.setTo(0.3, 0.3);
       trash.body.velocity.x = -2;
+      trashCans.body.immovable = true;
+
       // trash.enableBody = true;
       game.physics.arcade.collide(guy, trash);
     }
