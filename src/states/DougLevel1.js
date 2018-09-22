@@ -30,8 +30,6 @@ export default class extends Phaser.State {
       17
     );
     game.load.image("office", "src/assets/officebuilding.png");
-
-    //bring in office building
   }
 
   create() {
@@ -75,11 +73,47 @@ export default class extends Phaser.State {
 
     //  Make taco loop envoked
     this.makeTaco();
-
-    //Office building
-    //current anchor default(0,0)
   }
-  //Functions
+
+  update() {
+    //moving background comment out to platform instead of sidescroll
+    background.tilePosition.x -= 2;
+    guy.animations.play("walk", 14, true);
+    game.physics.arcade.collide(tacos);
+    game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
+    // console.log(guy.position.x, "GUY POSITION");
+
+    //Win function runs for set score
+    if (score === 5) {
+      this.win();
+    }
+    //autogenerates tacos when tacos.length is < number
+    if (tacos.length < 13) {
+      this.makeTaco();
+      console.log(tacos.length < 13, "tacos.length<3");
+    }
+    //Jump
+    if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && guy.body.onFloor()) {
+      guy.body.velocity.y = -400;
+    }
+    //RIGHT, LEFT MOVEMENT
+    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+      guy.scale.setTo(2, 2);
+      guy.x += speed * 3;
+      // guy.animations.play("walk", 14, true);
+    } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+      guy.scale.setTo(-2, 2);
+      guy.x -= speed * 3;
+      // guy.animations.play("walk", 14, true);
+    }
+    //SWITCH STATES ON 'S'
+    else if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+      console.log("switch", game.state);
+      switchState();
+    }
+  }
+
+  //FUNCTIONS
   makeTaco() {
     for (var i = 0; i < 13; i++) {
       // console.log(tacos.length, "tacoslength");
@@ -96,7 +130,7 @@ export default class extends Phaser.State {
       taco.body.gravity.x = Math.random() * -300;
     }
   }
-
+  //remove tacos from group when collected or off world bounds
   removeFromGroup(taco) {
     tacos.remove(taco);
   }
@@ -126,49 +160,13 @@ export default class extends Phaser.State {
   win() {
     //sets(x corner to half of the guy position)
     game.world.setBounds(guy.position.x / 2, 0, 2000, 560);
+
+    //Stop scroll
     // background.tilePosition.x = 0;
+
     //create office building at end of world
     office = game.add.image(1900, -10, "office");
 
     //timer to switch state
-  }
-
-  update() {
-    //moving background comment out to platform instead of sidescroll
-    background.tilePosition.x -= 2;
-    guy.animations.play("walk", 14, true);
-    game.physics.arcade.collide(tacos);
-    game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
-    // console.log(guy.position.x, "GUY POSITION");
-    //  Future platform/box/whatever collision
-    // var hitPlatform = game.physics.arcade.collide(player, platforms);
-
-    //Win function runs for set score
-    if (score === 5) {
-      this.win();
-    }
-    //autogenerates tacos when tacos.length is <
-    if (tacos.length < 13) {
-      this.makeTaco();
-      console.log(tacos.length < 13, "tacos.length<3");
-    }
-    //Jump
-    if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && guy.body.onFloor()) {
-      guy.body.velocity.y = -400;
-    }
-    //RIGHT, LEFT MOVEMENT
-    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-      guy.scale.setTo(2, 2);
-      guy.x += speed * 3;
-      // guy.animations.play("walk", 14, true);
-    } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-      guy.scale.setTo(-2, 2);
-      guy.x -= speed * 3;
-      // guy.animations.play("walk", 14, true);
-      //SWITCH STATES ON 'S'
-    } else if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
-      console.log("switch", game.state);
-      switchState();
-    }
   }
 }
