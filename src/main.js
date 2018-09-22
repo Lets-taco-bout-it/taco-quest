@@ -5,6 +5,7 @@ import Phaser from "phaser";
 import BootState from "./states/Boot";
 import DougState from "./states/DougLevel1";
 import MegLevel1 from "./states/MegLevel1";
+import MaxState from "./states/MaxsLevel1";
 
 import config from "./config";
 
@@ -22,6 +23,7 @@ class Game extends Phaser.Game {
     this.state.add("intro", introState, false);
     this.state.add("DougLevel1", DougState, false);
     this.state.add("MegLevel1", MegLevel1, false);
+    this.state.add("MaxsLevel1", MaxState, false);
 
     // with Cordova with need to wait that the device is ready so we will call the Boot state in another file
     if (!window.cordova) {
