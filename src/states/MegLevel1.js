@@ -11,17 +11,19 @@ var centerX = 800 / 2,
   text,
   boss,
   bossWalk,
-  gameOver;
+  gameOver,
+  bubble,
+  bubbleText;
 
 export default class extends Phaser.State {
   constructor() {
     super();
-    //keep track of variables here
   }
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
     game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
+    game.load.image("bubble", "src/assets/firedBubble.png");
   }
 
   create() {
@@ -66,17 +68,15 @@ export default class extends Phaser.State {
     boss.scale.setTo(0.5, 0.5);
     boss.anchor.setTo(0.5, 0.5);
     game.physics.enable(boss);
-
-    //boss animation
-    bossWalk = boss.animations.add("bossWalk", [4, 5, 6, 7]);
-    bossWalk.play(14, true);
+    boss.animations.add("bossWalk", [4, 5, 6, 7]);
+    boss.animations.play("bossWalk", 14, true);
+    boss.visible = false;
 
     // game.camera.deadzone = new Phaser.Rectangle(centerX - 400, 0, 600, 700);
   }
 
   update() {
     //boss walks across screen
-    boss.body.velocity.x -= 2;
     //moving background
     guy.animations.play("walk", 14, true);
 
@@ -106,5 +106,36 @@ export default class extends Phaser.State {
 
     guy.animations.stop(null, true);
     guy.tint = 0x777777;
+    guy.body.velocity.x = 0;
+    game.physics.arcade.collide(guy, boss, this.youreFired);
+
+    //boss animation
+    boss.visible = true;
+    boss.body.velocity.x -= 2;
+  }
+
+  youreFired() {
+    boss.animations.stop(null, true);
+
+    bubble = game.add.sprite(
+      boss.body.position.x - 5,
+      boss.body.position.y - 75,
+      "bubble"
+    );
+    bubble.scale.setTo(0.7);
+
+    bubbleText = game.add.text(
+      bubble.x + bubble.width / 2,
+      bubble.y + bubble.height / 2,
+      "Late again?! #@%! \nYou're fired.",
+      {
+        font: "14px Roboto Mono",
+        fill: "black",
+        wordWrap: true,
+        wordWrapWidth: bubble.width,
+        align: "center"
+      }
+    );
+    bubbleText.anchor.set(0.5);
   }
 }
