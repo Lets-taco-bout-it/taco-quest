@@ -40,7 +40,6 @@ export default class extends Phaser.State {
     background = game.add.tileSprite(-500, 0, 5000, 1080, "CityBG");
     background.anchor.setTo(0, 0.51);
     background.scale.setTo(1.5, 1.5);
-    console.log(background.tilePosition.y);
 
     //Guy
     guy = game.add.sprite(100, 525, "guy");
@@ -57,7 +56,7 @@ export default class extends Phaser.State {
     guy.body.gravity.y = 800;
     guy.body.collideWorldBounds = true;
 
-    //lists current game state
+    //Lists current game state
     game.add.text(0, 0, `${game.state.current}`);
 
     //Score
@@ -67,7 +66,7 @@ export default class extends Phaser.State {
     });
     scoreText.fixedToCamera = true;
 
-    //tacos
+    //Tacos
     tacos = game.add.group();
     tacos.enableBody = true;
     tacos.checkWorldBounds = true;
@@ -78,48 +77,57 @@ export default class extends Phaser.State {
   }
 
   update() {
-    //moving background comment out to platform instead of sidescroll
-    background.tilePosition.x -= 2;
-    guy.animations.play("walk", 14, true);
-    game.physics.arcade.collide(tacos);
-    game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
-    // console.log(guy.position.x, "GUY POSITION");
+    //KILL TIMER PLACEHOLDER if (timer === 0) {guy.alive = false}
 
-    //Win function runs for set score
-    if (score === 5) {
-      this.win();
-    }
-    //autogenerates tacos when tacos.length is < number
-    if (tacos.length < 13) {
-      this.makeTaco();
-      console.log(tacos.length < 13, "tacos.length<3");
-    }
-    //Jump
-    if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && guy.body.onFloor()) {
-      guy.body.velocity.y = -400;
-    }
-    //RIGHT, LEFT MOVEMENT
-    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+    //this.win() runs and guy walks to building
+    if (guy.alive === false && score >= 5) {
+      guy.body.velocity.x += 4;
       guy.scale.setTo(2, 2);
-      guy.x += speed * 3;
-      // guy.animations.play("walk", 14, true);
-    } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-      guy.scale.setTo(-2, 2);
-      guy.x -= speed * 3;
-      // guy.animations.play("walk", 14, true);
+      //  You can set your own fade color and duration
+      game.time.events.add(Phaser.Timer.SECOND * 4, this.cameraFade, this);
     }
-    //SWITCH STATES ON 'S'
-    else if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
-      console.log("switch", game.state);
-      switchState();
+    if (guy.alive === true) {
+      //moving background comment out to platform instead of sidescroll
+      background.tilePosition.x -= 2;
+      guy.animations.play("walk", 14, true);
+      game.physics.arcade.collide(tacos);
+      game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
+      //Win function runs for set score
+      if (score === 5) {
+        this.win();
+      }
+
+      //autogenerates tacos when tacos.length is < number
+      if (tacos.length < 13) {
+        this.makeTaco();
+      }
+      //Jump
+      if (
+        game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
+        guy.body.onFloor()
+      ) {
+        guy.body.velocity.y = -400;
+      }
+      //RIGHT, LEFT MOVEMENT
+      if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+        guy.scale.setTo(2, 2);
+        guy.x += speed * 3;
+        // guy.animations.play("walk", 14, true);
+      } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+        guy.scale.setTo(-2, 2);
+        guy.x -= speed * 3;
+        // guy.animations.play("walk", 14, true);
+      }
+      //SWITCH STATES ON 'S'
+      else if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+        switchState();
+      }
     }
   }
 
   //FUNCTIONS
   makeTaco() {
     for (var i = 0; i < 13; i++) {
-      // console.log(tacos.length, "tacoslength");
-
       taco = tacos.create(Math.random() * 5000, Math.random() * 600, "taco");
       //for fixed position remove move() and set to i * 70, Math.random() * 200, 'taco'
       taco.scale.setTo(0.05, 0.05);
@@ -136,7 +144,6 @@ export default class extends Phaser.State {
   removeFromGroup(taco) {
     tacos.remove(taco);
   }
-
   //Move taco animation for taco hurricane
   move(taco) {
     if (taco.y === 100) {
@@ -158,17 +165,15 @@ export default class extends Phaser.State {
     score += 1;
     scoreText.text = "Score: " + score;
   }
-  //winscreen function
+  //win screen function
   win() {
-    //sets(x corner to half of the guy position)
-    game.world.setBounds(guy.position.x / 2, 0, 2000, 560);
-
+    guy.alive = false;
+    game.world.setBounds(0, 0, 2000, 560);
     //create office building at end of world
-    office = game.add.image(1900, -10, "office");
-
-    //Stop scroll
-    // background.tilePosition.x = 0;
-
-    //timer to switch state
+    office = game.add.image(1700, -20, "office");
+  }
+  cameraFade() {
+    game.camera.fade(0x000000, 5000);
+    // switchState();
   }
 }

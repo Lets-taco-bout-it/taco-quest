@@ -54,6 +54,9 @@ export default class extends Phaser.State {
         guy = game.add.sprite(100, 525, "guy");
         guy.scale.setTo(2, 2);
         guy.anchor.setTo(0.5, 0.5);
+
+        //will auto switch state when scroll hits the bottom
+        // switchState();
         // return background.anchor.setTo(0, 0.51);
       }
     }
