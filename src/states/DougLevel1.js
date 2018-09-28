@@ -6,6 +6,8 @@ var centerX = windowWidth / 2,
   windowHeight,
   windowWidth,
   guy,
+  tacocat,
+  catWalk,
   background,
   tacos,
   taco,
@@ -22,14 +24,13 @@ export default class extends Phaser.State {
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
-    game.load.image("taco", "src/assets/taco.png");
     game.load.spritesheet(
       "tacocat",
       "src/assets/tacocatspritesheet.png",
-      32,
-      32,
-      17
+      336,
+      216
     );
+    game.load.image("taco", "src/assets/taco.png");
     game.load.image("office", "src/assets/officebuilding.png");
   }
 
@@ -48,6 +49,32 @@ export default class extends Phaser.State {
     guy.animations.add("walk", [0, 1, 2, 3, 4]);
     game.camera.follow(guy);
 
+    //Tacocat
+    tacocat = game.add.sprite(150, 400, "tacocat");
+    tacocat.scale.setTo(0.2, 0.2);
+    tacocat.anchor.setTo(0.5, 0.5);
+    catWalk = tacocat.animations.add("catWalk", [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ]);
+    catWalk.play(17, true);
+
     //Wold Bounds
     game.world.setBounds(windowWidth + guy.position.x, 0, windowWidth * 2, 560);
 
@@ -58,6 +85,10 @@ export default class extends Phaser.State {
 
     //Lists current game state
     game.add.text(0, 0, `${game.state.current}`);
+
+    game.physics.enable(tacocat);
+    tacocat.body.gravity.y = 800;
+    tacocat.body.collideWorldBounds = true;
 
     //Score
     scoreText = game.add.text(16, 16, "score: 0", {
@@ -93,6 +124,8 @@ export default class extends Phaser.State {
       game.physics.arcade.collide(tacos);
       game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
       //Win function runs for set score
+
+      //tacocat jump tacocat.body.onFloor and velocity -= 2
       if (score === 5) {
         this.win();
       }
