@@ -11,7 +11,7 @@ var line = [];
 
 var wordIndex = 0;
 var lineIndex = 0;
-
+var guy;
 var wordDelay = 120;
 var lineDelay = 400;
 var text;
@@ -25,6 +25,7 @@ var scroll = false;
 export default class extends Phaser.State {
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
+    game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
   }
 
   create() {
@@ -37,9 +38,7 @@ export default class extends Phaser.State {
       font: "25px Roboto Mono",
       fill: "#777777"
     });
-    console.log(lineIndex, content.length);
-    // game.input.onDown.add(this.startZoom);
-    // game.input.onDown.add(this.stopZoom);
+
     this.nextLine();
   }
 
@@ -53,8 +52,12 @@ export default class extends Phaser.State {
 
       if (background.tilePosition.y <= -551) {
         scroll = false;
+
         setTimeout(switchState, 1000);
-        // return background.anchor.setTo(0, 0.51);
+
+        guy = game.add.sprite(100, 525, "guy");
+        guy.scale.setTo(2, 2);
+        guy.anchor.setTo(0.5, 0.5);
       }
     }
 
