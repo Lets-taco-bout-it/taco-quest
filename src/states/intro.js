@@ -33,11 +33,8 @@ export default class extends Phaser.State {
     background.anchor.setTo(0, 0);
     background.scale.setTo(1.5, 1.5);
 
-    // game.add.image(0, 0, "CityBG");
     text = game.add.text(32, 32, "", { font: "25px Arial", fill: "#777777" });
-    console.log(lineIndex, content.length);
-    // game.input.onDown.add(this.startZoom);
-    // game.input.onDown.add(this.stopZoom);
+
     this.nextLine();
   }
 
