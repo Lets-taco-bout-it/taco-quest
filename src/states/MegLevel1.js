@@ -7,18 +7,24 @@ var centerX = 800 / 2,
   background,
   speed = 4,
   timer,
-  clock = 2,
+  //   clock = 2,
   text,
   boss,
   bossWalk,
   gameOver,
   bubble,
-  bubbleText;
+  bubbleText,
+  restart = false;
 
 export default class extends Phaser.State {
   constructor() {
     super();
   }
+
+  init() {
+    this.clock = 10;
+  }
+
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
@@ -48,15 +54,15 @@ export default class extends Phaser.State {
     timer = game.time.create(false);
 
     const updateClock = () => {
-      clock -= 2;
-      text.setText(`minutes remaining: ${clock}`);
+      this.clock -= 2;
+      text.setText(`minutes remaining: ${this.clock}`);
     };
 
     timer.loop(1000, updateClock, this);
 
     timer.start();
 
-    text = game.add.text(centerX, 0, `minutes remaining: ${clock}`, {
+    text = game.add.text(centerX, 0, `minutes remaining: ${this.clock}`, {
       font: "bold 30px Roboto Mono",
       fill: "#483E37",
       boundsAlignH: "center",
@@ -78,7 +84,6 @@ export default class extends Phaser.State {
   update() {
     //boss walks across screen
     //moving background
-    guy.animations.play("walk", 14, true);
 
     guy.animations.play("walk", 14, true);
 
@@ -98,7 +103,9 @@ export default class extends Phaser.State {
       switchState();
     }
     //when time runs out, invoke gameOver function
-    clock <= 0 ? this.gameOver() : null;
+    this.clock <= 0 ? this.gameOver() : null;
+
+    if (restart) setTimeout(this.restartLevel, 2000);
   }
 
   gameOver() {
@@ -127,9 +134,9 @@ export default class extends Phaser.State {
     bubbleText = game.add.text(
       bubble.x + bubble.width / 2,
       bubble.y + bubble.height / 2,
-      "Late again?! #@%! \nYou're fired.",
+      "LATE AGAIN?! #@%! \nYOU'RE FIRED.",
       {
-        font: "14px Roboto Mono",
+        font: "18px Roboto Mono",
         fill: "black",
         wordWrap: true,
         wordWrapWidth: bubble.width,
@@ -137,5 +144,15 @@ export default class extends Phaser.State {
       }
     );
     bubbleText.anchor.set(0.5);
+    restart = true;
+
+    // game.time.events.add(2000, this.restartLevel, game);
+  }
+
+  restartLevel() {
+    game.state.restart(true, true);
+
+    // this.clock = 30;
+    // timer.start();
   }
 }
