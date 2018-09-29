@@ -134,8 +134,10 @@ export default class extends Phaser.State {
 
       //Jump
       if (
-        game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
-        guy.body.onFloor()
+        (game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
+          guy.body.onFloor()) ||
+        (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) &&
+          guy.body.onFloor())
       ) {
         guy.body.velocity.y = -400;
       }
