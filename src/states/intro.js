@@ -33,7 +33,10 @@ export default class extends Phaser.State {
     background.scale.setTo(1.5, 1.5);
 
     // game.add.image(0, 0, "CityBG");
-    text = game.add.text(32, 32, "", { font: "25px Arial", fill: "#777777" });
+    text = game.add.text(32, 32, "", {
+      font: "25px Roboto Mono",
+      fill: "#777777"
+    });
     console.log(lineIndex, content.length);
     // game.input.onDown.add(this.startZoom);
     // game.input.onDown.add(this.stopZoom);
@@ -50,6 +53,7 @@ export default class extends Phaser.State {
 
       if (background.tilePosition.y <= -551) {
         scroll = false;
+        setTimeout(switchState, 1000);
         // return background.anchor.setTo(0, 0.51);
       }
     }

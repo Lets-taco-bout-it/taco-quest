@@ -105,6 +105,7 @@ export default class extends Phaser.State {
     //when time runs out, invoke gameOver function
     this.clock <= 0 ? this.gameOver() : null;
 
+    //delayed level restart after boss fires guy
     if (restart) setTimeout(this.restartLevel, 2000);
   }
 
@@ -116,11 +117,12 @@ export default class extends Phaser.State {
     guy.body.velocity.x = 0;
     game.physics.arcade.collide(guy, boss, this.youreFired);
 
-    //boss animation
+    //boss animation walking
     boss.visible = true;
     boss.body.velocity.x -= 2;
   }
 
+  //boss fires guy text bubble
   youreFired() {
     boss.animations.stop(null, true);
 
@@ -144,15 +146,12 @@ export default class extends Phaser.State {
       }
     );
     bubbleText.anchor.set(0.5);
-    restart = true;
 
-    // game.time.events.add(2000, this.restartLevel, game);
+    //invokes restartLevel in update function
+    restart = true;
   }
 
   restartLevel() {
     game.state.restart(true, true);
-
-    // this.clock = 30;
-    // timer.start();
   }
 }
