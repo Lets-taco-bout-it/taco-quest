@@ -33,7 +33,11 @@ export default class extends Phaser.State {
     background.anchor.setTo(0, 0);
     background.scale.setTo(1.5, 1.5);
 
-    text = game.add.text(32, 32, "", { font: "25px Arial", fill: "#777777" });
+    // game.add.image(0, 0, "CityBG");
+    text = game.add.text(32, 32, "", {
+      font: "25px Roboto Mono",
+      fill: "#777777"
+    });
 
     this.nextLine();
   }
@@ -48,13 +52,12 @@ export default class extends Phaser.State {
 
       if (background.tilePosition.y <= -551) {
         scroll = false;
+
+        setTimeout(switchState, 1000);
+
         guy = game.add.sprite(100, 525, "guy");
         guy.scale.setTo(2, 2);
         guy.anchor.setTo(0.5, 0.5);
-
-        //will auto switch state when scroll hits the bottom
-        // switchState();
-        // return background.anchor.setTo(0, 0.51);
       }
     }
 
