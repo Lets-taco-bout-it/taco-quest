@@ -111,7 +111,7 @@ export default class extends Phaser.State {
 
   gameOver() {
     timer.stop();
-
+    guy.alive = false;
     guy.animations.stop(null, true);
     guy.tint = 0x777777;
     guy.body.velocity.x = 0;
