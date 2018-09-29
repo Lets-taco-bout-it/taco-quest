@@ -7,6 +7,8 @@ var centerX = windowWidth / 2,
   windowWidth,
   guy,
   tacocat,
+  cat,
+  cats,
   catWalk,
   background,
   tacos,
@@ -24,14 +26,16 @@ export default class extends Phaser.State {
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
-    game.load.spritesheet(
-      "tacocat",
-      "src/assets/tacocatspritesheet.png",
-      336,
-      216
-    );
+    // game.load.spritesheet(
+    //   "tacocat",
+    //   "src/assets/tacocatspritesheet.png",
+    //   336,
+    //   216
+    // );
     game.load.image("taco", "src/assets/taco.png");
     game.load.image("office", "src/assets/officebuilding.png");
+    //cat
+    game.load.spritesheet("cat", "src/assets/tacocatspritesheet.png", 336, 216);
   }
 
   create() {
@@ -49,31 +53,8 @@ export default class extends Phaser.State {
     guy.animations.add("walk", [0, 1, 2, 3, 4]);
     game.camera.follow(guy);
 
-    //Tacocat
-    tacocat = game.add.sprite(150, 400, "tacocat");
-    tacocat.scale.setTo(0.2, 0.2);
-    tacocat.anchor.setTo(0.5, 0.5);
-    catWalk = tacocat.animations.add("catWalk", [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17
-    ]);
-    catWalk.play(17, true);
+    // //Tacocat
+    // this.getTacocat();
 
     //Wold Bounds
     game.world.setBounds(windowWidth + guy.position.x, 0, windowWidth * 2, 560);
@@ -85,10 +66,6 @@ export default class extends Phaser.State {
 
     //Lists current game state
     game.add.text(0, 0, `${game.state.current}`);
-
-    game.physics.enable(tacocat);
-    tacocat.body.gravity.y = 800;
-    tacocat.body.collideWorldBounds = true;
 
     //Score
     scoreText = game.add.text(16, 16, "score: 0", {
@@ -102,6 +79,14 @@ export default class extends Phaser.State {
     tacos.enableBody = true;
     tacos.checkWorldBounds = true;
     tacos.outOfBoundsKill = true;
+
+    //cat
+    cats = game.add.group();
+    cats.enableBody = true;
+    cats.checkWorldBounds = true;
+    cats.outOfBoundsKill = true;
+
+    this.makeCats();
 
     //  Make taco loop envoked
     this.makeTaco();
@@ -118,15 +103,20 @@ export default class extends Phaser.State {
       game.time.events.add(Phaser.Timer.SECOND * 4, this.cameraFade, this);
     }
     if (guy.alive === true) {
-      //moving background comment out to platform instead of sidescroll
+      //moving background
       background.tilePosition.x -= 2;
       guy.animations.play("walk", 14, true);
-      game.physics.arcade.collide(tacos);
+      game.physics.arcade.collide(guy, cats, this.collideCat, null, this);
       game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
-      //Win function runs for set score
 
-      //tacocat jump tacocat.body.onFloor and velocity -= 2
-      if (score === 5) {
+      // if (game.physics.arcade.collide(cats, guy))
+      //TACOCAT
+      // tacocat.x -= speed * 2;
+      // if (tacocat.body.onFloor() === true) {
+      //   tacocat.body.velocity.y = -400;
+      // }
+      //Set Score and win function runs
+      if (score === 50) {
         this.win();
       }
 
@@ -134,6 +124,14 @@ export default class extends Phaser.State {
       if (tacos.length < 13) {
         this.makeTaco();
       }
+
+      // cat
+      if (cats.length < 20) {
+        this.makeCats();
+        // console.log(cats.length);
+      }
+      cats.x -= speed * 2;
+
       //Jump
       if (
         game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
@@ -151,14 +149,60 @@ export default class extends Phaser.State {
         guy.x -= speed * 3;
         // guy.animations.play("walk", 14, true);
       }
-      //SWITCH STATES ON 'S'
-      else if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
-        switchState();
-      }
+    }
+    //SWITCH STATES ON 'S'
+    if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+      switchState();
+      score = 0;
     }
   }
 
   //FUNCTIONS
+  makeCats() {
+    for (var i = 0; i < 50; i++) {
+      cat = cats.create(i * 500, 400, "cat");
+      cat.scale.setTo(-0.2, 0.2);
+      cat.anchor.setTo(0.5, 0.5);
+      cat.enableBody = true;
+      cat.checkWorldBounds = true;
+      cat.outOfBoundsKill = true;
+      // cat.events.onOutOfBounds.add(this.removeCatFromGroup);
+      catWalk = cat.animations.add("catWalk", [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]);
+      catWalk.play(17, true);
+
+      game.physics.enable(cat);
+      cat.body.gravity.y = 800;
+      cat.body.collideWorldBounds = true;
+      cat.body.bounce.y = 0.9 + Math.random() * 0.2;
+    }
+  }
+
+  collideCat() {
+    console.log("collision");
+    score -= 5;
+  }
+  // removeCatFromGroup(cat) {
+  //   cats.remove(cat);
+  // }
   makeTaco() {
     for (var i = 0; i < 13; i++) {
       taco = tacos.create(Math.random() * 5000, Math.random() * 600, "taco");
@@ -209,4 +253,35 @@ export default class extends Phaser.State {
     game.camera.fade(0x000000, 5000);
     // switchState();
   }
+
+  // getTacocat() {
+  //   tacocat = game.add.sprite(Math.random() * 5000, 400, "tacocat");
+  //   tacocat.scale.setTo(-0.2, 0.2);
+  //   tacocat.anchor.setTo(0.5, 0.5);
+  //   catWalk = tacocat.animations.add("catWalk", [
+  //     0,
+  //     1,
+  //     2,
+  //     3,
+  //     4,
+  //     5,
+  //     6,
+  //     7,
+  //     8,
+  //     9,
+  //     10,
+  //     11,
+  //     12,
+  //     13,
+  //     14,
+  //     15,
+  //     16,
+  //     17
+  //   ]);
+  //   catWalk.play(17, true);
+
+  //   game.physics.enable(tacocat);
+  //   tacocat.body.gravity.y = 800;
+  //   tacocat.body.collideWorldBounds = true;
+  // }
 }
