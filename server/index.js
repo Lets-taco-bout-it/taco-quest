@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const massive = require("massive");
 const cors = require("cors");
+const controller = require("./controller");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = express();
