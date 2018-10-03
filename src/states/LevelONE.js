@@ -36,7 +36,8 @@ export default class extends Phaser.State {
   }
 
   init() {
-    this.clock = 10;
+    //60 mins is 30 sec
+    this.clock = 60;
   }
 
   preload() {

@@ -1,0 +1,1 @@
+SELECT * FROM tacoquest_lvl2_scores;
