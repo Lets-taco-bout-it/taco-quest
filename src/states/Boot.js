@@ -22,6 +22,7 @@ export default class extends Phaser.State {
     game.load.audio("themeSong", "src/assets/sounds/themesong.wav");
     game.load.spritesheet("mute", "/src/assets/soundToggleSheet.png", 96, 96);
     game.load.audio("gameSong", "src/assets/sounds/gameSong.wav");
+    game.load.image("city2", "src/assets/cityLevel2.png");
   }
 
   create() {

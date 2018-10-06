@@ -1,7 +1,7 @@
 import Phaser from "phaser";
-import { switchState } from "../utils";
+import { switchState, levelData } from "../utils";
 
-var centerX = windowWidth / 2,
+var centerX = 800 / 2,
   centerY = 600 / 2,
   windowHeight,
   windowWidth,
@@ -28,6 +28,7 @@ var centerX = windowWidth / 2,
   gameOver,
   bubble,
   bubbleText,
+  levelIndex = "levelOne",
   restart = false;
 
 export default class extends Phaser.State {
@@ -40,7 +41,8 @@ export default class extends Phaser.State {
   }
 
   preload() {
-    game.load.image("CityBG", "src/assets/CityBG.png");
+    // console.log("level test", levelData.levelONE.background);
+    game.load.image("CityBG", levelData[levelIndex].background);
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
     // game.load.spritesheet(
     //   "tacocat",
@@ -60,31 +62,35 @@ export default class extends Phaser.State {
 
   create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    //maxworldbounds
-    // game.world.setBounds(0, 0, 2800, 560);
+    // maxworldbounds
+    game.world.setBounds(0, 0, 2800, 560);
 
     //Background
-    background = game.add.tileSprite(-500, 0, 5000, 1080, "CityBG");
+    background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
     background.anchor.setTo(0, 0.51);
     background.scale.setTo(1.5, 1.5);
 
     //Guy
-    guy = game.add.sprite(100, 525, "guy");
+    guy = game.add.sprite(20, 525, "guy");
     guy.scale.setTo(2, 2);
     guy.anchor.setTo(0.5, 0.5);
     guy.animations.add("walk", [0, 1, 2, 3, 4]);
     game.camera.follow(guy);
+    game.physics.enable(guy, Phaser.Physics.ARCADE);
+    guy.body.collideWorldBounds = true;
+    guy.body.gravity.y = 800;
+
+    trashCans = game.add.physicsGroup();
+    trashCans.enableBody = true;
+    trashCans.checkWorldBounds = true;
+    trashCans.outOfBoundsKill = true;
+    this.makeTrash();
 
     // //Tacocat
     // this.getTacocat();
 
     //Wold Bounds
     game.world.setBounds(windowWidth + guy.position.x, 0, windowWidth * 2, 560);
-
-    //Guy Physics Elements
-    game.physics.enable(guy);
-    guy.body.gravity.y = 800;
-    guy.body.collideWorldBounds = true;
 
     //Lists current game state
     game.add.text(0, 0, `${game.state.current}`);
@@ -124,11 +130,11 @@ export default class extends Phaser.State {
     boss.visible = false;
 
     //TRASHCANS
-    trashCans = game.add.physicsGroup();
-    trashCans.enableBody = true;
-    trashCans.checkWorldBounds = true;
-    trashCans.outOfBoundsKill = true;
-    this.makeTrash();
+    // trashCans = game.add.physicsGroup();
+    // trashCans.enableBody = true;
+    // trashCans.checkWorldBounds = true;
+    // trashCans.outOfBoundsKill = true;
+    // this.makeTrash();
 
     //MANHOLE
     // manHole = game.add.physicsGroup();
@@ -157,6 +163,10 @@ export default class extends Phaser.State {
   }
 
   update() {
+    if (game.input.keyboard.isDown(Phaser.KeyCode.A)) {
+      (levelIndex = "maxsLevel2"), (score = 0);
+      this.state.start("levelONE");
+    }
     //KILL TIMER PLACEHOLDER if (timer === 0) {guy.alive = false}
     //when time runs out, invoke gameOver function
     this.clock <= 0 ? this.gameOver() : null;
@@ -210,7 +220,7 @@ export default class extends Phaser.State {
       }
       //RIGHT, LEFT MOVEMENT
       if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-        guy.scale.setTo(2, 2);
+        // guy.scale.setTo(2, 2);
         console.log(trashCans, guy);
         guy.body.velocity.x += speed;
         // guy.body.drag = 200;
@@ -219,7 +229,7 @@ export default class extends Phaser.State {
         }
         // guy.animations.play("walk", 14, true);
       } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-        guy.scale.setTo(-2, 2);
+        // guy.scale.setTo(-2, 2);
         guy.body.velocity.x -= speed;
         if (guy.body.velocity.x < -150) {
           guy.body.velocity.x = -150;
@@ -435,34 +445,34 @@ export default class extends Phaser.State {
     // switchState();
   }
 
-  // getTacocat() {
-  //   tacocat = game.add.sprite(Math.random() * 5000, 400, "tacocat");
-  //   tacocat.scale.setTo(-0.2, 0.2);
-  //   tacocat.anchor.setTo(0.5, 0.5);
-  //   catWalk = tacocat.animations.add("catWalk", [
-  //     0,
-  //     1,
-  //     2,
-  //     3,
-  //     4,
-  //     5,
-  //     6,
-  //     7,
-  //     8,
-  //     9,
-  //     10,
-  //     11,
-  //     12,
-  //     13,
-  //     14,
-  //     15,
-  //     16,
-  //     17
-  //   ]);
-  //   catWalk.play(17, true);
+  getTacocat() {
+    tacocat = game.add.sprite(Math.random() * 5000, 400, "tacocat");
+    tacocat.scale.setTo(-0.2, 0.2);
+    tacocat.anchor.setTo(0.5, 0.5);
+    catWalk = tacocat.animations.add("catWalk", [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ]);
+    catWalk.play(17, true);
 
-  //   game.physics.enable(tacocat);
-  //   tacocat.body.gravity.y = 800;
-  //   tacocat.body.collideWorldBounds = true;
-  // }
+    game.physics.enable(tacocat);
+    tacocat.body.gravity.y = 800;
+    tacocat.body.collideWorldBounds = true;
+  }
 }
