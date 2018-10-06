@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { switchState } from "../utils";
+import { switchState, calculateGameScore } from "../utils";
 
 var centerX = windowWidth / 2,
   centerY = 600 / 2,
@@ -184,7 +184,7 @@ export default class extends Phaser.State {
       //   tacocat.body.velocity.y = -400;
       // }
       //Set Score and win function runs
-      if (score === 50) {
+      if (score === 1) {
         this.win();
       }
 
@@ -430,6 +430,7 @@ export default class extends Phaser.State {
     game.world.setBounds(0, 0, 2000, 560);
     //create office building at end of world
     office = game.add.image(1700, -20, "office");
+    calculateGameScore.get(timer, 10);
   }
   cameraFade() {
     game.camera.fade(0x000000, 5000);
