@@ -11,7 +11,8 @@ export const switchState = () => {
     "DougLevel1",
     "MegLevel1",
     "MaxsLevel1",
-    "MaxsLevel2"
+    "MaxsLevel2",
+    "HighScore"
   ];
 
   const index = possStates.indexOf(game.state.current);
@@ -20,7 +21,10 @@ export const switchState = () => {
   game.state.start(possStates[index + 1]);
 };
 
-export const levelData = {
-  levelOne: { background: "src/assets/CityBG.png" },
-  levelTwo: { background: "src/assets/cityLevel2.png" }
+export const calculateGameScore = {
+  score: 0,
+  get: function(timer, catsKilled) {
+    this.score = timer + catsKilled;
+    return this.score;
+  }
 };
