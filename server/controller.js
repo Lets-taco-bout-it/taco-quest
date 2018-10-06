@@ -1,6 +1,7 @@
 module.exports = {
   getLvl1: (req, res) => {
     const dbInstance = req.app.get("db");
+    console.log("GETLVL1");
 
     dbInstance
       .get_lvl1()

@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const massive = require("massive");
 const cors = require("cors");
 const controller = require("./controller");
+const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = express();
@@ -21,15 +22,16 @@ massive(process.env.CONNECTION_STRING, { scripts: path.join(__dirname, "db") })
 //Endpoints
 //Level One
 app.get("/api/lvl1", controller.getLvl1);
-app.post("api/lvl1", contorller.postLvl1);
+app.post("api/lvl1", controller.postLvl1);
 //Level Two
 app.get("/api/lvl2", controller.getLvl2);
-app.post("api/lvl2", contorller.postLvl2);
+app.post("api/lvl2", controller.postLvl2);
 //Level Three
 app.get("/api/lvl3", controller.getLvl3);
-app.post("api/lvl3", contorller.postLvl3);
+app.post("api/lvl3", controller.postLvl3);
 
-// app.post("/api/lvl1", (req, res) => {
-//   const dbInstance = req.app.get("db");
-//   const {}
-// });
+const port = process.env.PORT || 4000;
+
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
