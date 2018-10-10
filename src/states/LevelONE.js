@@ -220,7 +220,7 @@ export default class extends Phaser.State {
       //   tacocat.body.velocity.y = -400;
       // }
       //Set Score and win function runs
-      if (score === 10) {
+      if (score === 1) {
         this.win();
       }
 
@@ -508,7 +508,8 @@ export default class extends Phaser.State {
     game.world.setBounds(0, 0, 2000, 560);
     //create office building at end of world
     office = game.add.image(1700, -20, "office");
-    calculateGameScore.get(timer, 10);
+    // timer.stop();
+    calculateGameScore.get(this.clock);
   }
   cameraFade() {
     game.camera.fade(0x000000, 5000);

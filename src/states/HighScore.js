@@ -22,8 +22,9 @@ export default class extends Phaser.State {
 
   init() {
     //sets score
-    this.score = game.time.totalElapsedSeconds();
-
+    // this.score = game.time.totalElapsedSeconds();
+    this.score = calculateGameScore.score;
+    console.log(this.score, "SCOREINHS", calculateGameScore.score, "CCGS");
     //gets highscores from table
     axios({
       method: "GET",
@@ -45,7 +46,7 @@ export default class extends Phaser.State {
     background.scale.setTo(1.5, 1.5);
     background.tint = 0x777777;
 
-    game.add.text(90, 0, `${game.time.totalElapsedSeconds()}`, style);
+    game.add.text(90, 0, `${[...this.score]}`, style);
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",

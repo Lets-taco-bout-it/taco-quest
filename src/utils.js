@@ -9,8 +9,8 @@ export const switchState = () => {
     "intro",
     "LevelONE",
     "DougLevel1",
-    "MegLevel1",
-    "MaxsLevel1",
+    // "MegLevel1",
+    // "MaxsLevel1",
     "HighScore"
   ];
 
@@ -22,8 +22,10 @@ export const switchState = () => {
 
 export const calculateGameScore = {
   score: 0,
-  get: function(timer, catsKilled) {
-    this.score = timer + catsKilled;
+  get: function(clock) {
+    this.score = clock;
+    console.log(this.score, "XXXXXXXXXX");
+
     return this.score;
   }
 };
