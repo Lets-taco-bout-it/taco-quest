@@ -15,7 +15,6 @@ var centerX = 800 / 2,
   taco,
   scoreText,
   office,
-  score = 0,
   cursors,
   speed = 10,
   //MAX VARS
@@ -39,6 +38,7 @@ export default class extends Phaser.State {
 
   init() {
     this.clock = 60;
+    this.score = 0;
   }
 
   preload() {
@@ -58,6 +58,7 @@ export default class extends Phaser.State {
     game.load.image("manHole", "src/assets/manhole.png", 32, 32);
     game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
     game.load.image("bubble", "src/assets/firedBubble.png");
+    game.load.image("catBubble", "src/assets/catBubble.png");
   }
 
   create() {
@@ -97,7 +98,7 @@ export default class extends Phaser.State {
     game.add.text(0, 0, `${game.state.current}`);
 
     //Score and Timer
-    scoreText = game.add.text(16, 16, "score: " + score, {
+    scoreText = game.add.text(16, 16, "tacos collected: " + this.score, {
       fontSize: "32px",
       fill: "#000"
     });
@@ -167,13 +168,14 @@ export default class extends Phaser.State {
   update() {
     isMoving = true;
 
-    if (score < 1) {
-      score = 0;
+    if (this.score <= 0) {
+      this.score = 0;
+      scoreText.text = "tacos collected: " + this.score;
     }
 
     //KILL TIMER PLACEHOLDER if (timer === 0) {guy.alive = false}
     //when time runs out, invoke gameOver function
-    if (this.clock <= 0 && score < 10) {
+    if (this.clock <= 0 && this.score < 10) {
       this.gameOver();
     }
 
@@ -184,7 +186,7 @@ export default class extends Phaser.State {
     }
 
     //this.win() runs and guy walks to building
-    if (guy.alive === false && score >= 10) {
+    if (guy.alive === false && this.score >= 10) {
       guy.body.velocity.x += 4;
       guy.scale.setTo(2, 2);
       //  You can set your own fade color and duration
@@ -222,12 +224,12 @@ export default class extends Phaser.State {
       //   tacocat.body.velocity.y = -400;
       // }
       //Set Score and win function runs
-      if (this.clock === 0 && score >= 10) {
+      if (this.clock <= 0 && this.score >= 10) {
         this.win();
       }
 
       //autogenerates tacos when tacos.length is < number
-      if (tacos.length < 5) {
+      if (tacos.length < 10) {
         this.makeTaco();
       }
 
@@ -321,20 +323,6 @@ export default class extends Phaser.State {
     );
     bubble.scale.setTo(0.7);
 
-    bubbleText = game.add.text(
-      bubble.x + bubble.width / 2,
-      bubble.y + bubble.height / 2,
-      "LATE AGAIN?! #@%! \nYOU'RE FIRED.",
-      {
-        font: "18px Roboto Mono",
-        fill: "black",
-        wordWrap: true,
-        wordWrapWidth: bubble.width,
-        align: "center"
-      }
-    );
-    bubbleText.anchor.set(0.5);
-
     //invokes restartLevel in update function
     restart = true;
   }
@@ -388,8 +376,17 @@ export default class extends Phaser.State {
   collisionHandler(obj1, obj2) {}
 
   makeCats() {
+    let min = 700;
     for (var i = 0; i < 8; i++) {
-      cat = cats.create(i * 1500, 400, "cat");
+      const randomNum = () => {
+        const num = Math.random() * 200 + min;
+        min += 1450;
+        return num;
+      };
+
+      let roll = randomNum();
+
+      cat = cats.create(roll, 800, "cat");
       game.physics.enable(cat);
       cat.scale.setTo(-0.2, 0.2);
       cat.anchor.setTo(0.5, 0.5);
@@ -428,29 +425,44 @@ export default class extends Phaser.State {
   }
 
   collideCat(guy, cat) {
-    //IF GUY COLLIDES ON TOP OF CAT
-    // console.log("score", score);
-
     if (!guy.immune) {
       guy.immune = true;
       guy.alpha = 0.5;
-      score -= 1;
-      console.log("score:", score);
+      this.score -= 1;
+      scoreText.text = "tacos collected: " + this.score;
+
+      console.log("score:", this.score);
       if (guy.body.position.x < cat.body.position.x) {
         guy.body.velocity.x = -300;
       } else {
         guy.body.velocity.x = 300;
       }
+      bubble = game.add.sprite(
+        cat.body.position.x - 5,
+        cat.body.position.y - 75,
+        "catBubble"
+      );
+      bubble.scale.setTo(0.7);
       game.time.events.add(
         500,
         () => {
           guy.immune = false;
           guy.alpha = 1;
+
+          game.time.events.add(
+            500,
+            () => {
+              bubble.alpha = 0;
+            },
+            this
+          );
         },
         this
       );
+
       console.log("collision");
     } else {
+      //IF GUY COLLIDES ON TOP OF CAT
       if (guy.y < cat.y) {
         cat.body.velocity.x = 0;
         cat.y -= 30;
@@ -478,7 +490,7 @@ export default class extends Phaser.State {
   }
 
   makeTaco() {
-    for (var i = 0; i < 9; i++) {
+    for (var i = 0; i < 15; i++) {
       taco = tacos.create(Math.random() * 5000, -5, "taco");
       //for fixed position remove move() and set to i * 70, Math.random() * 200, 'taco'
       taco.scale.setTo(0.05, 0.05);
@@ -515,9 +527,9 @@ export default class extends Phaser.State {
     taco.kill();
     this.removeFromGroup(taco);
     //  Add and update the score
-    score += 1;
-    scoreText.text = "Score: " + score;
-    console.log("score", score);
+    this.score += 1;
+    scoreText.text = "tacos collected: " + this.score;
+    console.log("score", this.score);
   }
   //win screen function
   win() {
