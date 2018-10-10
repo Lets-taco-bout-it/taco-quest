@@ -271,7 +271,7 @@ export default class extends Phaser.State {
         // guy.animations.play("walk", 14, true);
       } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
         guy.scale.setTo(-2, 2);
-        guy.body.velocity.x -= speed * 2;
+        guy.body.velocity.x -= speed * 3;
         if (guy.body.velocity.x < -150) {
           guy.body.velocity.x = -150;
         }
@@ -488,6 +488,8 @@ export default class extends Phaser.State {
 
       //  Optional taco gravity
       taco.body.gravity.y = Math.random() * 300;
+      taco.body.velocity.x = -175;
+
       // taco.body.gravity.x = Math.random() * -300;
     }
   }
