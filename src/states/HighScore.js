@@ -46,13 +46,14 @@ export default class extends Phaser.State {
     background.scale.setTo(1.5, 1.5);
     background.tint = 0x777777;
 
-    game.add.text(90, 0, `${this.score}`, style);
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
+    game.add.text(90, 0, `${this.score}`, style);
+
     //INPUT BOX
     input = game.add.inputField(centerX, 90);
     inputBox = game.add.inputField(centerX, 90, {
@@ -81,12 +82,12 @@ export default class extends Phaser.State {
   //FUNCTIONS
   //.forEach(this.highScores)
   createHighScore() {
-    game.add.text(centerX, 0, `${this.highScores[0].initials}`, style);
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
+    game.add.text(centerX, 0, `${this.highScores[0].initials}`, style);
   }
 }
