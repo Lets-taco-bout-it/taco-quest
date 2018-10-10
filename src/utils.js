@@ -22,8 +22,8 @@ export const switchState = () => {
 
 export const calculateGameScore = {
   score: 0,
-  get: function(clock) {
-    this.score = clock;
+  get: function(score) {
+    this.score = score;
     console.log(this.score, "XXXXXXXXXX");
 
     return this.score;

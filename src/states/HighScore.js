@@ -46,7 +46,7 @@ export default class extends Phaser.State {
     background.scale.setTo(1.5, 1.5);
     background.tint = 0x777777;
 
-    game.add.text(90, 0, `${[...this.score]}`, style);
+    game.add.text(90, 0, `${this.score}`, style);
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",
