@@ -173,7 +173,9 @@ export default class extends Phaser.State {
 
     //KILL TIMER PLACEHOLDER if (timer === 0) {guy.alive = false}
     //when time runs out, invoke gameOver function
-    this.clock <= 0 ? this.gameOver() : null;
+    if (this.clock <= 0 && score < 10) {
+      this.gameOver();
+    }
 
     if (!guy.alive) {
       trashCans.kill();
@@ -220,7 +222,7 @@ export default class extends Phaser.State {
       //   tacocat.body.velocity.y = -400;
       // }
       //Set Score and win function runs
-      if (score === 10) {
+      if (this.clock === 0 && score >= 10) {
         this.win();
       }
 
@@ -234,7 +236,7 @@ export default class extends Phaser.State {
         if (cat.body.position.x <= 20) {
           this.removeCatFromGroup(cat);
           cat.kill();
-          console.log(cats.length);
+          // console.log(cats.length);
         }
       });
 
@@ -338,7 +340,7 @@ export default class extends Phaser.State {
   }
 
   restartLevel() {
-    game.state.restart(true, true);
+    // game.state.restart(true, true);
   }
 
   makeTrash() {
@@ -419,7 +421,6 @@ export default class extends Phaser.State {
 
       cat.body.gravity.y = 800;
       cat.body.collideWorldBounds = true;
-      console.log("catbody", cat.body);
       // cat.body.bounce.y = 1;
       //0.9 + Math.random() * 0.2;
       // cat.body.velocity.x = -1;
@@ -430,29 +431,32 @@ export default class extends Phaser.State {
     //IF GUY COLLIDES ON TOP OF CAT
     // console.log("score", score);
 
-    if (guy.y < cat.y) {
-      cat.body.velocity.x = 0;
-      cat.y -= 30;
-      cat.kill();
-      guy.y -= 30;
+    if (!guy.immune) {
+      guy.immune = true;
+      guy.alpha = 0.5;
+      score -= 1;
+      console.log("score:", score);
+      if (guy.body.position.x < cat.body.position.x) {
+        guy.body.velocity.x = -300;
+      } else {
+        guy.body.velocity.x = 300;
+      }
+      game.time.events.add(
+        500,
+        () => {
+          guy.immune = false;
+          guy.alpha = 1;
+        },
+        this
+      );
+      console.log("collision");
     } else {
-      if (!guy.immune) {
-        guy.immune = true;
-        guy.alpha = 0.5;
-        score -= 1;
-        if (guy.body.position.x < cat.body.position.x) {
-          guy.body.velocity.x = -300;
-        } else {
-          guy.body.velocity.x = 300;
-        }
-        game.time.events.add(
-          500,
-          () => {
-            guy.immune = false;
-            guy.alpha = 1;
-          },
-          this
-        );
+      if (guy.y < cat.y) {
+        cat.body.velocity.x = 0;
+        cat.y -= 30;
+        cat.kill();
+        guy.y -= 30;
+        console.log("killed cat", guy.y, cat.y);
       }
     }
 
@@ -470,7 +474,7 @@ export default class extends Phaser.State {
   }
 
   collideTrash(guy, trash) {
-    isMoving = false;
+    // isMoving = false;
   }
 
   makeTaco() {
@@ -513,7 +517,7 @@ export default class extends Phaser.State {
     //  Add and update the score
     score += 1;
     scoreText.text = "Score: " + score;
-    // console.log("score", score);
+    console.log("score", score);
   }
   //win screen function
   win() {
