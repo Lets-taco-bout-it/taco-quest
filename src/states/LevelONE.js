@@ -17,7 +17,7 @@ var centerX = 800 / 2,
   office,
   score = 0,
   cursors,
-  speed = 4,
+  speed = 10,
   //MAX VARS
   trashCans,
   trash,
@@ -225,16 +225,26 @@ export default class extends Phaser.State {
       }
 
       //autogenerates tacos when tacos.length is < number
-      if (tacos.length < 13) {
+      if (tacos.length < 5) {
         this.makeTaco();
       }
 
-      // cat
-      // if (cats.length < 20) {
-      //   this.makeCats();
-      //   // console.log(cats.length);
-      // }
-      // cats.x -= 10;
+      // cat boundaries
+      cats.children.map(cat => {
+        if (cat.body.position.x <= 20) {
+          this.removeCatFromGroup(cat);
+          cat.kill();
+          console.log(cats.length);
+        }
+      });
+
+      //regenerates cats
+      if (cats.length < 8) {
+        this.makeCats();
+      }
+
+      //cat speed
+      cats.x -= 5;
 
       //Jump
       if (
@@ -376,7 +386,7 @@ export default class extends Phaser.State {
   collisionHandler(obj1, obj2) {}
 
   makeCats() {
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 8; i++) {
       cat = cats.create(i * 1500, 400, "cat");
       game.physics.enable(cat);
       cat.scale.setTo(-0.2, 0.2);
@@ -384,7 +394,7 @@ export default class extends Phaser.State {
       cat.enableBody = true;
       cat.checkWorldBounds = true;
       cat.outOfBoundsKill = true;
-      // cat.events.onOutOfBounds.add(this.removeCatFromGroup);
+      cat.events.onOutOfBounds.add(this.removeCatFromGroup);
       catWalk = cat.animations.add("catWalk", [
         0,
         1,
@@ -409,9 +419,10 @@ export default class extends Phaser.State {
 
       cat.body.gravity.y = 800;
       cat.body.collideWorldBounds = true;
-      cat.body.bounce.y = 1;
+      console.log("catbody", cat.body);
+      // cat.body.bounce.y = 1;
       //0.9 + Math.random() * 0.2;
-      cat.body.velocity.x = Math.random() * -300 - 175;
+      // cat.body.velocity.x = -1;
     }
   }
 
@@ -454,17 +465,17 @@ export default class extends Phaser.State {
     //CAT SAYS 'THANKS'
   }
 
-  // removeCatFromGroup(cat) {
-  //   cats.remove(cat);
-  // }
+  removeCatFromGroup(cat) {
+    cats.remove(cat);
+  }
 
   collideTrash(guy, trash) {
     isMoving = false;
   }
 
   makeTaco() {
-    for (var i = 0; i < 13; i++) {
-      taco = tacos.create(Math.random() * 5000, Math.random() * 600, "taco");
+    for (var i = 0; i < 9; i++) {
+      taco = tacos.create(Math.random() * 5000, -5, "taco");
       //for fixed position remove move() and set to i * 70, Math.random() * 200, 'taco'
       taco.scale.setTo(0.05, 0.05);
       taco.checkWorldBounds = true;
@@ -473,25 +484,27 @@ export default class extends Phaser.State {
 
       //  Optional taco gravity
       taco.body.gravity.y = Math.random() * 300;
-      taco.body.gravity.x = Math.random() * -300;
+      // taco.body.gravity.x = Math.random() * -300;
     }
   }
   //remove tacos from group when collected or off world bounds
   removeFromGroup(taco) {
     tacos.remove(taco);
   }
+
   //Move taco animation for taco hurricane
-  // move(taco) {
-  //   if (taco.y === 100) {
-  //     game.add
-  //       .tween(taco)
-  //       .to({ y: "+300" }, 2000, Phaser.Easing.Linear.None, true);
-  //   } else if (taco.y === 400) {
-  //     game.add
-  //       .tween(taco)
-  //       .to({ y: "-500" }, 2000, Phaser.Easing.Linear.None, true);
-  //   }
-  // }
+  move(taco) {
+    if (taco.y === 100) {
+      game.add
+        .tween(taco)
+        .to({ y: "+300" }, 2000, Phaser.Easing.Linear.None, true);
+    } else if (taco.y === 400) {
+      game.add
+        .tween(taco)
+        .to({ y: "-500" }, 2000, Phaser.Easing.Linear.None, true);
+    }
+  }
+
   //collects and counts tacos, removes from group
   collectTaco(guy, taco) {
     //removes taco
