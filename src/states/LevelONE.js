@@ -86,7 +86,6 @@ export default class extends Phaser.State {
     // this.getTacocat();
 
     //Wold Bounds
-    // console.log(windowWidth, windowHeight);
     // game.world.setBounds(windowWidth + guy.position.x, 0, windowWidth * 2, 560);
 
     //Guy Physics Elements
@@ -194,7 +193,6 @@ export default class extends Phaser.State {
     }
 
     if (guy.alive === true) {
-      guy.animations.play("walk", 14, true);
       game.physics.arcade.collide(
         guy,
         trashCans,
@@ -238,7 +236,6 @@ export default class extends Phaser.State {
         if (cat.body.position.x <= 20) {
           this.removeCatFromGroup(cat);
           cat.kill();
-          // console.log(cats.length);
         }
       });
 
@@ -251,40 +248,35 @@ export default class extends Phaser.State {
       cats.x -= 5;
 
       //Jump
-      if (
-        (game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
-          guy.body.onFloor()) ||
-        (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) &&
-          guy.body.onFloor())
-      ) {
-        guy.body.velocity.y = -500;
-        guy.animations.stop("walk");
-        guy.animations.play("jump", 14, true);
+      if (guy.body.blocked.down || guy.body.touching.down) {
+        guy.animations.play("walk", 14, true);
+
+        if (
+          game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
+          game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
+        ) {
+          guy.animations.stop("walk");
+          guy.animations.play("jump");
+          guy.body.velocity.y = -500;
+        }
       }
       //RIGHT, LEFT MOVEMENT
       if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
         guy.scale.setTo(2, 2);
-        // console.log(trashCans, guy);
         guy.body.velocity.x += speed;
-        // guy.body.drag = 200;
         if (guy.body.velocity.x > 150) {
           guy.body.velocity.x = 150;
         }
-        // guy.animations.play("walk", 14, true);
       } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
         guy.scale.setTo(-2, 2);
         guy.body.velocity.x -= speed * 2;
         if (guy.body.velocity.x < -150) {
           guy.body.velocity.x = -150;
         }
+      } else {
+        guy.body.velocity.x = 0;
+        // guy.animations.stop("jump");
         // guy.animations.play("walk", 14, true);
-      } else guy.body.velocity.x = 0;
-
-      if (
-        game.input.keyboard.isDown(Phaser.Keyboard.UP) &&
-        guy.body.touching.down == true
-      ) {
-        guy.body.velocity.y = -400;
       }
     }
     //SWITCH STATES ON 'S'
@@ -341,7 +333,6 @@ export default class extends Phaser.State {
         min += 1450;
         return num;
       };
-      // console.log(randomNumber(), roll);
       let roll = randomNumber();
 
       trash = trashCans.create(roll, 470, "trash");
@@ -372,8 +363,6 @@ export default class extends Phaser.State {
     //   manHole.body.immovable = true;
     // }
   }
-
-  collisionHandler(obj1, obj2) {}
 
   makeCats() {
     let min = 700;
@@ -425,51 +414,36 @@ export default class extends Phaser.State {
   }
 
   collideCat(guy, cat) {
-    if (!guy.immune) {
+    if (guy.deltaY > cat.deltaY && guy.body.touching.down) {
+      //IF GUY COLLIDES ON TOP OF CAT
+      cat.body.velocity.x = 0;
+      cat.kill();
+    } else if (!guy.immune) {
       guy.immune = true;
       guy.alpha = 0.5;
+      cat.alpha = 0.5;
       this.score -= 1;
       scoreText.text = "tacos collected: " + this.score;
 
-      console.log("score:", this.score);
-      if (guy.body.position.x < cat.body.position.x) {
-        guy.body.velocity.x = -300;
-      } else {
-        guy.body.velocity.x = 300;
-      }
+      //adds cat speech bubble
+      cat.x = cat.x;
       bubble = game.add.sprite(
         cat.body.position.x - 5,
         cat.body.position.y - 75,
         "catBubble"
       );
       bubble.scale.setTo(0.7);
+
+      //sets timer for immunity and cat bubble
       game.time.events.add(
-        500,
+        700,
         () => {
           guy.immune = false;
           guy.alpha = 1;
-
-          game.time.events.add(
-            500,
-            () => {
-              bubble.alpha = 0;
-            },
-            this
-          );
+          bubble.alpha = 0;
         },
         this
       );
-
-      console.log("collision");
-    } else {
-      //IF GUY COLLIDES ON TOP OF CAT
-      if (guy.y < cat.y) {
-        cat.body.velocity.x = 0;
-        cat.y -= 30;
-        cat.kill();
-        guy.y -= 30;
-        console.log("killed cat", guy.y, cat.y);
-      }
     }
 
     // cat.kill();
@@ -529,11 +503,11 @@ export default class extends Phaser.State {
     //  Add and update the score
     this.score += 1;
     scoreText.text = "tacos collected: " + this.score;
-    console.log("score", this.score);
   }
   //win screen function
   win() {
     guy.alive = false;
+    timer.stop();
     game.world.setBounds(0, 0, 2000, 560);
     //create office building at end of world
     office = game.add.image(1700, -20, "office");
@@ -543,6 +517,14 @@ export default class extends Phaser.State {
     game.camera.fade(0x000000, 5000);
     // switchState();
   }
+
+  // render() {
+  //   // if (showDebug)
+  //   // {
+  //   game.debug.bodyInfo(guy, 32, 32);
+  //   game.debug.body(guy);
+  //   // }
+  // }
 
   // getTacocat() {
   //   tacocat = game.add.sprite(Math.random() * 5000, 400, "tacocat");
