@@ -22,7 +22,7 @@ massive(process.env.CONNECTION_STRING, { scripts: path.join(__dirname, "db") })
 //Endpoints
 //Level One
 app.get("/api/lvl1", controller.getLvl1);
-app.post("api/lvl1", controller.postLvl1);
+app.post("/api/lvl1", controller.postLvl1);
 //Level Two
 app.get("/api/lvl2", controller.getLvl2);
 app.post("api/lvl2", controller.postLvl2);

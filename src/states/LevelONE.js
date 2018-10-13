@@ -173,7 +173,7 @@ export default class extends Phaser.State {
 
     //KILL TIMER PLACEHOLDER if (timer === 0) {guy.alive = false}
     //when time runs out, invoke gameOver function
-    if (this.clock <= 0 && score < 10) {
+    if (this.clock <= 0 && score < 2) {
       this.gameOver();
     }
 
@@ -184,7 +184,7 @@ export default class extends Phaser.State {
     }
 
     //this.win() runs and guy walks to building
-    if (guy.alive === false && score >= 10) {
+    if (guy.alive === false && score >= 2) {
       guy.body.velocity.x += 4;
       guy.scale.setTo(2, 2);
       //  You can set your own fade color and duration
@@ -222,7 +222,7 @@ export default class extends Phaser.State {
       //   tacocat.body.velocity.y = -400;
       // }
       //Set Score and win function runs
-      if (this.clock === 0 && score >= 10) {
+      if (this.clock === 0 && score >= 2) {
         this.win();
       }
 

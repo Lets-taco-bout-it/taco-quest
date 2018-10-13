@@ -9,6 +9,7 @@ var centerX = 800 / 2,
   input,
   inputBox,
   inputHandler,
+  submitBtn,
   BASE_URL = "http://localhost:4000";
 
 export default class extends Phaser.State {
@@ -22,15 +23,15 @@ export default class extends Phaser.State {
 
   init() {
     //sets score
-    // this.score = game.time.totalElapsedSeconds();
     this.score = calculateGameScore.score;
-    console.log(this.score, "SCOREINHS", calculateGameScore.score, "CCGS");
+    // console.log(this.score, "SCOREINHS", calculateGameScore.score, "CCGS");
     //gets highscores from table
     axios({
       method: "GET",
       url: BASE_URL + "/api/lvl1"
     }).then(res => {
       this.highScores = res.data;
+      console.log(this.highScores, "ALLHIGHSCORES");
 
       this.createHighScore();
     });
@@ -39,6 +40,12 @@ export default class extends Phaser.State {
   preload() {
     game.load.image("CityBG", "src/assets/CityBG.png");
     game.add.plugin(PhaserInput.Plugin);
+    game.load.spritesheet(
+      "submitButton",
+      "src/assets/achievement_spriteSheet.png",
+      48,
+      48
+    );
   }
   create() {
     background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
@@ -52,11 +59,11 @@ export default class extends Phaser.State {
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    game.add.text(90, 0, `${this.score}`, style);
+    game.add.text(90, 0, `Your Score ${this.score}`, style);
 
     //INPUT BOX
-    input = game.add.inputField(centerX, 90);
-    inputBox = game.add.inputField(centerX, 90, {
+    input = game.add.inputField(centerX, 15);
+    inputBox = game.add.inputField(centerX, 15, {
       font: "18px Arial",
       fill: "#212121",
       fontWeight: "bold",
@@ -70,17 +77,50 @@ export default class extends Phaser.State {
       type: PhaserInput.InputType.text
     });
     console.log("game score", calculateGameScore.score);
+
+    //SUBMIT BUTTON
+    let submitHandler = () => {
+      //sets initials
+      this.initials = inputBox.value;
+      console.log("button clicked", this.initials);
+      axios({
+        method: "POST",
+        url: BASE_URL + "/api/lvl1",
+        data: { score: this.score, initials: this.initials }
+      }).then(res => {
+        console.log(200, "added highscore");
+        axios({
+          method: "GET",
+          url: BASE_URL + "/api/lvl1"
+        }).then(res => {
+          this.highScores = res.data;
+          console.log(this.highScores, "ALLHIGHSCORES");
+
+          this.createHighScore();
+        });
+      });
+    };
+    submitBtn = game.add.button(
+      centerX + 167,
+      10,
+      "submitButton",
+      submitHandler,
+      this,
+      1, //hover
+      0, //normal
+      2, //clicked
+      0 //normal
+    );
   }
 
   update() {
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
-      this.initials = inputBox.value;
       console.log(inputBox.value, "VALUE", this.initials, "initials");
     }
   }
 
   //FUNCTIONS
-  //.forEach(this.highScores)
+
   createHighScore() {
     var style = {
       font: "bold 50px Roboto Mono",
@@ -88,6 +128,65 @@ export default class extends Phaser.State {
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    game.add.text(centerX, 0, `${this.highScores[0].initials}`, style);
+    game.add.text(
+      centerX,
+      50,
+      `1. ${this.highScores[0].initials} ${this.highScores[0].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      90,
+      `2. ${this.highScores[1].initials} ${this.highScores[1].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      130,
+      `3. ${this.highScores[2].initials} ${this.highScores[2].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      170,
+      `4. ${this.highScores[3].initials} ${this.highScores[3].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      210,
+      `5. ${this.highScores[4].initials} ${this.highScores[4].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      250,
+      `6. ${this.highScores[5].initials} ${this.highScores[5].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      290,
+      `7. ${this.highScores[6].initials} ${this.highScores[6].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      330,
+      `8. ${this.highScores[7].initials} ${this.highScores[7].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      370,
+      `9. ${this.highScores[8].initials} ${this.highScores[8].score}`,
+      style
+    );
+    game.add.text(
+      centerX,
+      410,
+      `10. ${this.highScores[9].initials} ${this.highScores[9].score}`,
+      style
+    );
   }
 }
