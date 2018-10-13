@@ -18,6 +18,8 @@ var centerX = 800 / 2,
   cursors,
   speed = 10,
   //MAX VARS
+  manHole,
+  manHoles,
   trashCans,
   trash,
   //MEG VARS
@@ -29,7 +31,7 @@ var centerX = 800 / 2,
   bubble,
   bubbleText,
   restart = false,
-  isMoving;
+  isMoving = true;
 
 export default class extends Phaser.State {
   constructor() {
@@ -39,10 +41,11 @@ export default class extends Phaser.State {
   init() {
     this.clock = 60;
     this.score = 0;
+    this.falling = false;
   }
 
   preload() {
-    game.load.image("CityBG", "src/assets/CityBG.png");
+    game.load.image("city2", "src/assets/cityLevel2.png");
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
     // game.load.spritesheet(
     //   "tacocat",
@@ -52,10 +55,10 @@ export default class extends Phaser.State {
     // );
     game.load.image("taco", "src/assets/taco.png");
     game.load.image("office", "src/assets/officebuilding.png");
+    game.load.image("manHole", "src/assets/manhole.png", 387, 130);
     //cat
     game.load.spritesheet("cat", "src/assets/tacocatspritesheet.png", 336, 216);
     game.load.image("trash", "src/assets/dumpster3.png");
-    game.load.image("manHole", "src/assets/manhole.png", 32, 32);
     game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
     game.load.image("bubble", "src/assets/firedBubble.png");
     game.load.image("catBubble", "src/assets/catBubble.png");
@@ -67,12 +70,12 @@ export default class extends Phaser.State {
     game.world.setBounds(0, 0, 2800, 560);
 
     //Background
-    background = game.add.tileSprite(-500, 0, 5000, 1080, "CityBG");
+    background = game.add.tileSprite(-500, 0, 5000, 1080, "city2");
     background.anchor.setTo(0, 0.51);
     background.scale.setTo(1.5, 1.5);
 
     //Guy
-    guy = game.add.sprite(100, 525, "guy");
+    guy = game.add.sprite(100, 535, "guy");
     guy.scale.setTo(2, 2);
     guy.anchor.setTo(0.5, 0.5);
     guy.animations.add("walk", [3, 4, 3, 0]);
@@ -138,13 +141,13 @@ export default class extends Phaser.State {
     trashCans.outOfBoundsKill = true;
     this.makeTrash();
 
-    //MANHOLE
-    // manHole = game.add.physicsGroup();
-    // manHole.enableBody = true;
-    // trashCans.checkWorldBounds = true;
-    // manHole.outOfBoundsKill = true;
-    // manHole.anchor.setTo(0.8, 0.8);
-    // this.makeManHole();
+    //manhole
+    manHoles = game.add.physicsGroup();
+    manHoles.enableBody = true;
+    manHoles.checkWorldBounds = true;
+    manHoles.outOfBoundsKill = true;
+    manHoles.setAll("body.setSize", "body", 20, 30, 20, 20);
+    this.makeManHole();
 
     //Tacos
     tacos = game.add.group();
@@ -165,8 +168,6 @@ export default class extends Phaser.State {
   }
 
   update() {
-    isMoving = true;
-
     if (this.score <= 0) {
       this.score = 0;
       scoreText.text = "tacos collected: " + this.score;
@@ -182,6 +183,7 @@ export default class extends Phaser.State {
       trashCans.kill();
       cats.kill();
       tacos.kill();
+      manHoles.kill();
     }
 
     //this.win() runs and guy walks to building
@@ -200,8 +202,16 @@ export default class extends Phaser.State {
         null,
         this
       );
+
       game.physics.arcade.collide(guy, cats, this.collideCat, null, this);
       game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
+      game.physics.arcade.overlap(
+        guy,
+        manHoles,
+        this.collideManHole,
+        null,
+        this
+      );
 
       if (isMoving === true) {
         //moving background
@@ -213,6 +223,10 @@ export default class extends Phaser.State {
         trashCans.children.forEach(can => {
           can.body.velocity.x = 0;
         });
+        manHoles.children.forEach(hole => {
+          hole.body.velocity.x = 0;
+        });
+        guy.body.velocity.x = 0;
       }
 
       // if (game.physics.arcade.collide(cats, guy))
@@ -319,9 +333,9 @@ export default class extends Phaser.State {
     restart = true;
   }
 
-  restartLevel() {
-    // game.state.restart(true, true);
-  }
+  //   restartLevel() {
+
+  //   }
 
   makeTrash() {
     let min = 1000;
@@ -344,25 +358,47 @@ export default class extends Phaser.State {
   }
 
   makeManHole() {
-    // trash locations ish
-    //0-200, 650-850, 1100-1300, 1550-1750
-    // let hole;
-    // let min = 200;
-    // for (var i = 0; i < 8; i++) {
-    //   const randomNumber = () => {
-    //     // 200 is the range (plus min)
-    //     const num = Math.random() * 200 + min;
-    //     // min adjusts distance between trash
-    //     min += 450;
-    //     return num;
-    //   };
-    //   let roll = randomNumber();
-    //   hole = trashCans.create(roll, 470, "manHole");
-    //   manHole.scale.setTo(0.7, 0.7);
-    //   manHole.body.velocity.x = -175;
-    //   manHole.body.immovable = true;
-    // }
+    let min = 600;
+    for (var i = 0; i < 10; i++) {
+      const randomNumber = () => {
+        // 200 is the range (plus min)
+        const num = Math.random() * 350 + min;
+        // min adjusts distance between manHoles
+        min += 1600;
+        return num;
+      };
+      let roll = randomNumber();
+
+      manHole = manHoles.create(roll, 550, "manHole");
+
+      manHole.scale.setTo(0.3, 0.3);
+      manHole.anchor.setTo(0.5, 0.5);
+
+      manHole.body.velocity.x = -175;
+      manHole.body.immovable = true;
+    }
   }
+
+  collideManHole() {
+    console.log("fell through hole");
+    isMoving = false;
+    this.add
+      .tween(guy.scale)
+      .to({ x: 0.3, y: 10 }, 500)
+      .start()
+
+      .onComplete.add(() => guy.destroy(), this);
+    if (this.clock <= 0 && this.score < 10) {
+      this.gameOver();
+    }
+
+    // this.falling = true;
+  }
+
+  //   manHoleTween(){
+  //       .tween(guy.)
+  //       .to({x:.3, y:})
+  //   }
 
   makeCats() {
     let min = 700;
