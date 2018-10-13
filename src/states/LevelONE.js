@@ -23,12 +23,11 @@ var centerX = 800 / 2,
   //MEG VARS
   timer,
   timerText,
-  boss,
-  bossWalk,
-  gameOver,
-  bubble,
-  bubbleText,
-  restart = false,
+  // boss,
+  // bossWalk,
+  // gameOver,
+  // bubble,
+  // restart = false,
   isMoving;
 
 export default class extends Phaser.State {
@@ -37,8 +36,13 @@ export default class extends Phaser.State {
   }
 
   init() {
-    this.clock = 60;
+    this.clock = 2;
     this.score = 0;
+    this.restart = false;
+    this.firedBubble;
+    this.catBubble;
+    this.boss;
+    this.stopBoss = false;
   }
 
   preload() {
@@ -57,7 +61,7 @@ export default class extends Phaser.State {
     game.load.image("trash", "src/assets/dumpster3.png");
     game.load.image("manHole", "src/assets/manhole.png", 32, 32);
     game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
-    game.load.image("bubble", "src/assets/firedBubble.png");
+    game.load.image("firedBubble", "src/assets/firedBubble.png");
     game.load.image("catBubble", "src/assets/catBubble.png");
   }
 
@@ -123,13 +127,13 @@ export default class extends Phaser.State {
     timerText.fixedToCamera = true;
 
     //boss
-    boss = game.add.sprite(780, 530, "boss");
-    boss.scale.setTo(0.5, 0.5);
-    boss.anchor.setTo(0.5, 0.5);
-    game.physics.enable(boss);
-    boss.animations.add("bossWalk", [4, 5, 6, 7]);
-    boss.animations.play("bossWalk", 14, true);
-    boss.visible = false;
+    this.boss = game.add.sprite(780, 530, "boss");
+    this.boss.scale.setTo(0.5, 0.5);
+    this.boss.anchor.setTo(0.5, 0.5);
+    game.physics.enable(this.boss);
+    this.boss.animations.add("bossWalk", [4, 5, 6, 7]);
+    this.boss.animations.play("bossWalk", 14, true);
+    this.boss.visible = false;
 
     //TRASHCANS
     trashCans = game.add.physicsGroup();
@@ -193,13 +197,7 @@ export default class extends Phaser.State {
     }
 
     if (guy.alive === true) {
-      game.physics.arcade.collide(
-        guy,
-        trashCans,
-        this.collideTrash,
-        null,
-        this
-      );
+      game.physics.arcade.collide(guy, trashCans);
       game.physics.arcade.collide(guy, cats, this.collideCat, null, this);
       game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
 
@@ -286,7 +284,11 @@ export default class extends Phaser.State {
     }
 
     //delayed level restart after boss fires guy
-    if (restart) setTimeout(this.restartLevel, 2000);
+    if (this.restart) setTimeout(this.restartLevel, 2000);
+
+    if (this.stopBoss) {
+      this.boss.body.velocity.x = 0;
+    }
   }
 
   //FUNCTIONS
@@ -297,26 +299,32 @@ export default class extends Phaser.State {
     guy.animations.stop(null, true);
     guy.tint = 0x777777;
     guy.body.velocity.x = 0;
-    game.physics.arcade.collide(guy, boss, this.youreFired);
+    game.physics.arcade.collide(guy, this.boss, this.youreFired, null, this);
 
     //boss animation walking
-    boss.visible = true;
-    boss.body.velocity.x -= 2;
+    this.boss.visible = true;
+    this.boss.body.velocity.x -= 2;
   }
 
   //boss fires guy text bubble
   youreFired() {
-    boss.animations.stop(null, true);
+    this.stopBoss = true;
+    this.boss.animations.stop(null, true);
+    // this.boss.body.velocity.x = 0;
+    // this.boss.body.immovable = true;
 
-    bubble = game.add.sprite(
-      boss.body.position.x - 5,
-      boss.body.position.y - 75,
-      "bubble"
+    console.log(this.boss.body.velocity);
+    console.log(this.boss.body);
+
+    this.firedBubble = game.add.sprite(
+      this.boss.body.position.x - 5,
+      this.boss.body.position.y - 75,
+      "firedBubble"
     );
-    bubble.scale.setTo(0.7);
+    this.firedBubble.scale.setTo(0.7);
 
     //invokes restartLevel in update function
-    restart = true;
+    this.restart = true;
   }
 
   restartLevel() {
@@ -341,27 +349,6 @@ export default class extends Phaser.State {
       trash.body.velocity.x = -175;
       trash.body.immovable = true;
     }
-  }
-
-  makeManHole() {
-    // trash locations ish
-    //0-200, 650-850, 1100-1300, 1550-1750
-    // let hole;
-    // let min = 200;
-    // for (var i = 0; i < 8; i++) {
-    //   const randomNumber = () => {
-    //     // 200 is the range (plus min)
-    //     const num = Math.random() * 200 + min;
-    //     // min adjusts distance between trash
-    //     min += 450;
-    //     return num;
-    //   };
-    //   let roll = randomNumber();
-    //   hole = trashCans.create(roll, 470, "manHole");
-    //   manHole.scale.setTo(0.7, 0.7);
-    //   manHole.body.velocity.x = -175;
-    //   manHole.body.immovable = true;
-    // }
   }
 
   makeCats() {
@@ -427,12 +414,12 @@ export default class extends Phaser.State {
 
       //adds cat speech bubble
       cat.x = cat.x;
-      bubble = game.add.sprite(
+      this.catBubble = game.add.sprite(
         cat.body.position.x - 5,
         cat.body.position.y - 75,
         "catBubble"
       );
-      bubble.scale.setTo(0.7);
+      this.catBubble.scale.setTo(0.7);
 
       //sets timer for immunity and cat bubble
       game.time.events.add(
@@ -440,7 +427,7 @@ export default class extends Phaser.State {
         () => {
           guy.immune = false;
           guy.alpha = 1;
-          bubble.alpha = 0;
+          this.catBubble.alpha = 0;
         },
         this
       );
@@ -457,10 +444,6 @@ export default class extends Phaser.State {
 
   removeCatFromGroup(cat) {
     cats.remove(cat);
-  }
-
-  collideTrash(guy, trash) {
-    // isMoving = false;
   }
 
   makeTaco() {
