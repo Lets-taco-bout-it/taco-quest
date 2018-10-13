@@ -277,7 +277,7 @@ export default class extends Phaser.State {
     //SWITCH STATES ON 'S'
     if (this.game.input.keyboard.isDown(Phaser.KeyCode.S)) {
       switchState();
-      score = 0;
+      this.score = 0;
     }
     //invoke win function on 'W' - must have enough tacos
     if (this.game.input.keyboard.isDown(Phaser.KeyCode.W)) {
