@@ -17,6 +17,7 @@ export default class extends Phaser.State {
     super();
 
     this.highScores = [];
+    this.phaserScores = [];
     this.initials = "";
     this.score = "";
   }
@@ -24,7 +25,6 @@ export default class extends Phaser.State {
   init() {
     //sets score
     this.score = calculateGameScore.score;
-    // console.log(this.score, "SCOREINHS", calculateGameScore.score, "CCGS");
     //gets highscores from table
     axios({
       method: "GET",
@@ -56,6 +56,8 @@ export default class extends Phaser.State {
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "6",
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
@@ -67,6 +69,8 @@ export default class extends Phaser.State {
       font: "18px Arial",
       fill: "#212121",
       fontWeight: "bold",
+      stroke: "#000000",
+      strokeThickness: "6",
       width: 150,
       padding: 8,
       borderWidth: 1,
@@ -81,6 +85,7 @@ export default class extends Phaser.State {
     //SUBMIT BUTTON
     let submitHandler = () => {
       //sets initials
+      this.clearHighScore();
       this.initials = inputBox.value;
       console.log("button clicked", this.initials);
       axios({
@@ -89,6 +94,7 @@ export default class extends Phaser.State {
         data: { score: this.score, initials: this.initials }
       }).then(res => {
         console.log(200, "added highscore");
+
         axios({
           method: "GET",
           url: BASE_URL + "/api/lvl1"
@@ -117,76 +123,89 @@ export default class extends Phaser.State {
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
       console.log(inputBox.value, "VALUE", this.initials, "initials");
     }
+    if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+      switchState();
+      // score = 0;
+    }
   }
 
   //FUNCTIONS
+
+  clearHighScore() {
+    this.phaserScores.forEach(score => score.destroy());
+  }
 
   createHighScore() {
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "6",
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    game.add.text(
-      centerX,
-      50,
-      `1. ${this.highScores[0].initials} ${this.highScores[0].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      90,
-      `2. ${this.highScores[1].initials} ${this.highScores[1].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      130,
-      `3. ${this.highScores[2].initials} ${this.highScores[2].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      170,
-      `4. ${this.highScores[3].initials} ${this.highScores[3].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      210,
-      `5. ${this.highScores[4].initials} ${this.highScores[4].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      250,
-      `6. ${this.highScores[5].initials} ${this.highScores[5].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      290,
-      `7. ${this.highScores[6].initials} ${this.highScores[6].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      330,
-      `8. ${this.highScores[7].initials} ${this.highScores[7].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      370,
-      `9. ${this.highScores[8].initials} ${this.highScores[8].score}`,
-      style
-    );
-    game.add.text(
-      centerX,
-      410,
-      `10. ${this.highScores[9].initials} ${this.highScores[9].score}`,
-      style
+    game.add.text(centerX - 150, 70, `HIGH SCORES`, style);
+    this.phaserScores.push(
+      game.add.text(
+        centerX - 100,
+        130,
+        `1. ${this.highScores[0].initials} ${this.highScores[0].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        170,
+        `2. ${this.highScores[1].initials} ${this.highScores[1].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        210,
+        `3. ${this.highScores[2].initials} ${this.highScores[2].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        250,
+        `4. ${this.highScores[3].initials} ${this.highScores[3].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        290,
+        `5. ${this.highScores[4].initials} ${this.highScores[4].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        330,
+        `6. ${this.highScores[5].initials} ${this.highScores[5].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        370,
+        `7. ${this.highScores[6].initials} ${this.highScores[6].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        410,
+        `8. ${this.highScores[7].initials} ${this.highScores[7].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        450,
+        `9. ${this.highScores[8].initials} ${this.highScores[8].score}`,
+        style
+      ),
+      game.add.text(
+        centerX - 100,
+        490,
+        `10. ${this.highScores[9].initials} ${this.highScores[9].score}`,
+        style
+      )
     );
   }
 }
