@@ -23,8 +23,10 @@ export const switchState = () => {
 
 export const calculateGameScore = {
   score: 0,
-  get: function(timer, catsKilled) {
-    this.score = timer + catsKilled;
+  get: function(score) {
+    this.score = score;
+    console.log(this.score, "XXXXXXXXXX");
+
     return this.score;
   }
 };
