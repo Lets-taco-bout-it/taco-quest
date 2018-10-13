@@ -7,7 +7,7 @@ export default class extends Phaser.State {
     this.restart = false;
     this.centerX = 800 / 2;
     this.centerY = 600 / 2;
-    this.clock = 2;
+    this.clock = 60;
     this.score = 0;
     this.speed = 10;
     this.stopBoss = false;
