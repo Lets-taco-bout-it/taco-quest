@@ -1,1 +1,1 @@
-SELECT * FROM tacoquest_lvl3_scores;
+SELECT * FROM tacoquest_lvl3_scores ORDER BY score DESC;

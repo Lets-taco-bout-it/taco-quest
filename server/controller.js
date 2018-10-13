@@ -36,6 +36,7 @@ module.exports = {
   postLvl1: (req, res) => {
     const dbInstance = req.app.get("db");
     const { initials, score } = req.body;
+    console.log("POSTLVL1", score, initials);
 
     dbInstance
       .post_lvl1([initials, score])

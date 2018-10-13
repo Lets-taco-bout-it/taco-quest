@@ -266,7 +266,7 @@ export default class extends Phaser.State {
         }
       } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
         this.guy.scale.setTo(-2, 2);
-        this.guy.body.velocity.x -= this.speed * 2;
+        this.guy.body.velocity.x -= this.speed * 3;
         if (this.guy.body.velocity.x < -150) {
           this.guy.body.velocity.x = -150;
         }
@@ -467,6 +467,7 @@ export default class extends Phaser.State {
 
       //  Optional taco gravity
       this.taco.body.gravity.y = Math.random() * 300;
+      this.taco.body.velocity.x = -175;
     }
   }
   //remove tacos from group when collected or off world bounds
@@ -503,7 +504,7 @@ export default class extends Phaser.State {
     this.game.world.setBounds(0, 0, 2000, 560);
     //create office building at end of world
     this.office = this.game.add.image(1700, -20, "office");
-    calculateGameScore.get(this.timer, 10);
+    calculateGameScore.get(this.score);
   }
   cameraFade() {
     this.game.camera.fade(0x000000, 5000);
