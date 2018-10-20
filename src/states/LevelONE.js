@@ -125,7 +125,7 @@ export default class extends Phaser.State {
     this.timerText.fixedToCamera = true;
 
     //boss
-    this.boss = this.game.add.sprite(780, 530, "boss");
+    this.boss = this.game.add.sprite(850, 530, "boss");
     this.boss.scale.setTo(0.5, 0.5);
     this.boss.anchor.setTo(0.5, 0.5);
     this.game.physics.enable(this.boss);
@@ -389,8 +389,6 @@ export default class extends Phaser.State {
     this.boss.visible = false;
     this.score = 0;
     this.speed = 10;
-    this.guy.body.velocity.x = 1;
-    this.boss.body.velocity.x = 1;
     this.stopGuy = false;
     this.stopBoss = false;
 
