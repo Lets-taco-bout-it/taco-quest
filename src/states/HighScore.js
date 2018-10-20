@@ -18,6 +18,7 @@ export default class extends Phaser.State {
     this.inputHandler;
     this.submitBtn;
     this.BASE_URL = "http://localhost:4000";
+    this.nextButton;
   }
 
   init() {
@@ -44,6 +45,7 @@ export default class extends Phaser.State {
       48,
       48
     );
+    game.load.spritesheet("nextButton", "src/assets/next.png", 96, 96);
   }
   create() {
     this.background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
@@ -114,6 +116,19 @@ export default class extends Phaser.State {
       0, //normal
       2, //clicked
       0 //normal
+    );
+
+    //NEXT BUTTON
+    this.nextButton = game.add.button(
+      this.centerX + 250,
+      250,
+      "nextButton",
+      switchState,
+      this,
+      1,
+      0,
+      2,
+      0
     );
   }
 
