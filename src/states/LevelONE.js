@@ -7,10 +7,11 @@ export default class extends Phaser.State {
     this.restart = false;
     this.centerX = 800 / 2;
     this.centerY = 600 / 2;
-    this.clock = 60;
+    this.clock = 10;
     this.score = 0;
     this.speed = 10;
     this.stopBoss = false;
+    this.stopGuy = false;
     this.fired = false;
     this.firedBubble;
     this.catBubble;
@@ -31,10 +32,7 @@ export default class extends Phaser.State {
     this.isMoving;
   }
 
-  init() {
-    // this.guy.alive = true;
-    // console.log(this.guy);
-  }
+  init() {}
 
   preload() {
     this.game.load.image("CityBG", "src/assets/CityBG.png");
@@ -57,7 +55,6 @@ export default class extends Phaser.State {
   }
 
   create() {
-    // console.log("create");
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     //maxworldbounds
     this.game.world.setBounds(0, 0, 2800, 560);
@@ -287,11 +284,15 @@ export default class extends Phaser.State {
     //delayed level restart after boss fires guy
     if (this.restart) {
       this.restart = false;
-      setTimeout(this.restartLevel.bind(this), 2000);
     }
     //stops boss from pushing guy after collision
     if (this.stopBoss) {
       this.boss.body.velocity.x = 0;
+    }
+
+    //stops guy from slowly moving forward while boss fires him
+    if (this.stopGuy) {
+      this.guy.body.velocity.x = 0;
     }
 
     if (this.fired === true) {
@@ -304,6 +305,7 @@ export default class extends Phaser.State {
   gameOver() {
     this.timer.stop();
     this.guy.alive = false;
+    this.stopGuy = true;
     this.guy.animations.stop(null, true);
     this.guy.tint = 0x777777;
     this.guy.body.velocity.x = 0;
@@ -324,6 +326,7 @@ export default class extends Phaser.State {
 
   //boss fires guy text bubble
   youreFired() {
+    this.fired = false;
     this.stopBoss = true;
     this.boss.animations.stop(null, true);
 
@@ -336,14 +339,22 @@ export default class extends Phaser.State {
 
     //invokes restartLevel in update function
     this.restart = true;
-    console.log("youre fired");
   }
 
   restartLevel() {
-    // this.clock = 60;
-    // this.guy.alive = true;
-    // this.game.state.restart(true, false);
-    // console.log("restarting");
+    this.restart = false;
+    this.clock = 60;
+    this.guy.alive = true;
+    this.guy.alpha = 1;
+    this.boss.visible = false;
+    this.score = 0;
+    this.speed = 10;
+    this.guy.body.velocity.x = 1;
+    this.boss.body.velocity.x = 1;
+    this.stopGuy = false;
+    this.stopBoss = false;
+
+    this.game.state.restart(true, true);
   }
 
   makeTrash() {
@@ -506,8 +517,11 @@ export default class extends Phaser.State {
     this.office = this.game.add.image(1700, -20, "office");
     calculateGameScore.get(this.score);
   }
+
   cameraFade() {
-    this.game.camera.fade(0x000000, 5000);
+    this.game.camera.fade(0x000000, 2000);
+    this.game.camera.onFadeComplete.add(this.restartLevel, this);
+
     // switchState();
   }
 
