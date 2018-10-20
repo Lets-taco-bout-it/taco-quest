@@ -184,7 +184,6 @@ export default class extends Phaser.State {
       this.guy.body.velocity.x += 4;
       this.guy.scale.setTo(2, 2);
       //  You can set your own fade color and duration
-      this.game.time.events.add(Phaser.Timer.SECOND * 4, this.cameraFade, this);
     }
 
     if (this.guy.alive === true) {
@@ -377,7 +376,9 @@ export default class extends Phaser.State {
     this.firedBubble.scale.setTo(0.7);
 
     //invokes restartLevel in update function
-    this.restart = true;
+    this.game.camera.fade(0x000000, 2000);
+    this.game.camera.onFadeComplete.add(this.restartLevel, this);
+    // this.restart = true;
   }
 
   restartLevel() {
@@ -560,13 +561,6 @@ export default class extends Phaser.State {
     calculateGameScore.get(this.score);
     this.game.camera.fade(0x000000, 5000);
     this.game.camera.onFadeComplete.add(() => switchState(), this);
-  }
-
-  cameraFade() {
-    this.game.camera.fade(0x000000, 2000);
-    this.game.camera.onFadeComplete.add(this.restartLevel, this);
-
-    // switchState();
   }
 
   // render() {

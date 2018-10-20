@@ -61,7 +61,7 @@ export default class extends Phaser.State {
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    game.add.text(90, 0, `Your Score: ${this.score}`, style);
+    game.add.text(60, 0, `Your Score: ${this.score}`, style);
 
     //INPUT BOX
     this.input = game.add.inputField(this.centerX, 15);
