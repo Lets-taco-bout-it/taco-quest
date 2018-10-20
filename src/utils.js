@@ -8,6 +8,7 @@ export const switchState = () => {
     "Boot",
     "intro",
     "LevelONE",
+<<<<<<< HEAD
     "DougLevel1",
     "MegLevel1",
     "MaxsLevel1",
@@ -15,6 +16,13 @@ export const switchState = () => {
     "MaxsLevel3",
     "gameOver",
     "HighScore"
+=======
+    "HighScore",
+    // "DougLevel1",
+    // "MegLevel1",
+    // "MaxsLevel1",
+    "MaxsLevel2"
+>>>>>>> master
   ];
 
   const index = possStates.indexOf(game.state.current);
