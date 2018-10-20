@@ -10,7 +10,6 @@ export const switchState = () => {
     "LevelONE",
     "HighScore",
     "LevelTWO",
-
     // "DougLevel1",
     // "MegLevel1",
     // "MaxsLevel1",
