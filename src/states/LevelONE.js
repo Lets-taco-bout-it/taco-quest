@@ -37,6 +37,9 @@ export default class extends Phaser.State {
       stroke: "#000000",
       strokeThickness: "4"
     };
+    this.winSound;
+    this.sound;
+    this.muteToggleBtn;
   }
 
   init() {}
@@ -59,6 +62,7 @@ export default class extends Phaser.State {
     this.game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
     this.game.load.image("firedBubble", "src/assets/firedBubble.png");
     this.game.load.image("catBubble", "src/assets/catBubble.png");
+    this.game.load.audio("winSound", "src/assets/sounds/winSound.wav");
   }
 
   create() {
@@ -296,6 +300,43 @@ export default class extends Phaser.State {
     if (this.fired === true) {
       this.youreFired();
     }
+
+    //MUTE-UNMUTE TOGGLE BUTTON
+
+    let toggleMute = () => {
+      if (!game.sound.mute) {
+        game.sound.mute = true;
+      } else {
+        game.sound.mute = false;
+      }
+    };
+
+    if (!game.sound.mute) {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        2,
+        0,
+        4,
+        1
+      );
+    } else {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        3,
+        1,
+        5,
+        0
+      );
+    }
+    this.muteToggleBtn.scale.setTo(0.3, 0.3);
   }
 
   //FUNCTIONS
@@ -508,6 +549,9 @@ export default class extends Phaser.State {
   }
   //win screen function
   win() {
+    this.winSound = this.game.add.audio("winSound");
+    this.winSound.play();
+
     this.guy.alive = false;
     this.timer.stop();
     this.game.world.setBounds(0, 0, 2000, 560);

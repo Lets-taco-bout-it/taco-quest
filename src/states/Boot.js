@@ -59,7 +59,6 @@ export default class extends Phaser.State {
     //PLAY BUTTON
     let actionOnClick = () => {
       switchState();
-      music.destroy();
     };
 
     startBtn = game.add.button(
@@ -78,23 +77,20 @@ export default class extends Phaser.State {
   update() {
     if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
       console.log("switch", game.state);
-      music.destroy();
       switchState();
     }
 
     //MUTE-UNMUTE TOGGLE BUTTON
 
     let toggleMute = () => {
-      if (sound) {
-        sound = !sound;
-        music.pause();
+      if (!game.sound.mute) {
+        game.sound.mute = true;
       } else {
-        sound = !sound;
-        music.resume();
+        game.sound.mute = false;
       }
     };
 
-    if (sound) {
+    if (!game.sound.mute) {
       muteToggleBtn = game.add.button(
         5,
         5,
