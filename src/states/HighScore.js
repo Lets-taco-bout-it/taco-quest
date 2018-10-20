@@ -18,6 +18,7 @@ export default class extends Phaser.State {
     this.inputHandler;
     this.submitBtn;
     this.BASE_URL = "http://localhost:4000";
+    this.nextButton;
   }
 
   init() {
@@ -44,6 +45,7 @@ export default class extends Phaser.State {
       48,
       48
     );
+    game.load.spritesheet("nextButton", "src/assets/next.png", 96, 96);
   }
   create() {
     this.background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
@@ -59,7 +61,7 @@ export default class extends Phaser.State {
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    game.add.text(90, 0, `Your Score ${this.score}`, style);
+    game.add.text(90, 0, `Your Score: ${this.score}`, style);
 
     //INPUT BOX
     this.input = game.add.inputField(this.centerX, 15);
@@ -105,7 +107,7 @@ export default class extends Phaser.State {
       });
     };
     this.submitBtn = game.add.button(
-      this.centerX + 167,
+      this.centerX + 170,
       10,
       "submitButton",
       submitHandler,
@@ -114,6 +116,19 @@ export default class extends Phaser.State {
       0, //normal
       2, //clicked
       0 //normal
+    );
+
+    //NEXT BUTTON
+    this.nextButton = game.add.button(
+      this.centerX + 250,
+      250,
+      "nextButton",
+      switchState,
+      this,
+      1,
+      0,
+      2,
+      0
     );
   }
 
@@ -142,7 +157,7 @@ export default class extends Phaser.State {
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    game.add.text(this.centerX - 150, 70, `HIGH SCORES`, style);
+    game.add.text(this.centerX - 250, 70, `LEVEL 1 HIGH SCORES`, style);
     this.phaserScores.push(
       game.add.text(
         this.centerX - 100,

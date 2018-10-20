@@ -1,18 +1,17 @@
 import Phaser from "phaser";
 import { switchState, toggleMute } from "../utils";
 
-var centerX = 800 / 2,
-  centerY = 600 / 2,
-  background,
-  welcomeText,
-  startBtn,
-  music,
-  muteToggleBtn,
-  sound = true;
-
 export default class extends Phaser.State {
   constructor() {
     super();
+
+    this.centerX = 800 / 2;
+    this.centerY = 600 / 2;
+    this.background;
+    this.welcomeText;
+    this.startBtn;
+    this.music;
+    this.muteToggleBtn;
   }
 
   preload() {
@@ -20,7 +19,7 @@ export default class extends Phaser.State {
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
     game.load.spritesheet("start", "src/assets/playButtonSheet.png", 209, 96);
     game.load.audio("themeSong", "src/assets/sounds/themesong.wav");
-    game.load.spritesheet("mute", "/src/assets/soundToggleSheet.png", 96, 96);
+    game.load.spritesheet("mute", "src/assets/soundToggleSheet.png", 96, 96);
     game.load.audio("gameSong", "src/assets/sounds/gameSong.wav");
   }
 
@@ -28,42 +27,42 @@ export default class extends Phaser.State {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.world.setBounds(0, 0, 1400, 560);
 
-    background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
-    background.anchor.setTo(0, 0.51);
-    background.scale.setTo(1.5, 1.5);
-    background.tint = 0x777777;
+    this.background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
+    this.background.anchor.setTo(0, 0.51);
+    this.background.scale.setTo(1.5, 1.5);
+    this.background.tint = 0x777777;
 
-    //MUSIC AUTO PLAY ON GAME LOAD
-    music = game.add.audio("themeSong");
-    music.loop = true;
-    music.play();
+    //this.music AUTO PLAY ON GAME LOAD
+    this.music = game.add.audio("themeSong");
+    this.music.loop = true;
+    this.music.play();
 
     //WELCOME TO TACO QUEST TEXT AND STYLING
-    game.add.text(centerX, 0, `${game.state.current}`);
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "6",
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    welcomeText = background.game.add.text(
+    this.welcomeText = this.background.game.add.text(
       0,
       0,
       "WELCOME TO TACO QUEST!",
       style
     );
-    welcomeText.setShadow(3, 3, "rgba(0,0,0,0.5)", 2);
-    welcomeText.setTextBounds(0, 150, 800, 100);
+    this.welcomeText.setShadow(3, 3, "rgba(0,0,0,0.5)", 2);
+    this.welcomeText.setTextBounds(0, 150, 800, 100);
 
     //PLAY BUTTON
     let actionOnClick = () => {
       switchState();
-      music.destroy();
     };
 
-    startBtn = game.add.button(
-      centerX - 105,
-      centerY,
+    this.startBtn = game.add.button(
+      this.centerX - 105,
+      this.centerY,
       "start",
       actionOnClick,
       this,
@@ -76,25 +75,21 @@ export default class extends Phaser.State {
 
   update() {
     if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
-      console.log("switch", game.state);
-      music.destroy();
       switchState();
     }
 
     //MUTE-UNMUTE TOGGLE BUTTON
 
     let toggleMute = () => {
-      if (sound) {
-        sound = !sound;
-        music.pause();
+      if (!game.sound.mute) {
+        game.sound.mute = true;
       } else {
-        sound = !sound;
-        music.resume();
+        game.sound.mute = false;
       }
     };
 
-    if (sound) {
-      muteToggleBtn = game.add.button(
+    if (!game.sound.mute) {
+      this.muteToggleBtn = game.add.button(
         5,
         5,
         "mute",
@@ -106,7 +101,7 @@ export default class extends Phaser.State {
         1
       );
     } else {
-      muteToggleBtn = game.add.button(
+      this.muteToggleBtn = game.add.button(
         5,
         5,
         "mute",
@@ -118,6 +113,6 @@ export default class extends Phaser.State {
         0
       );
     }
-    muteToggleBtn.scale.setTo(0.3, 0.3);
+    this.muteToggleBtn.scale.setTo(0.3, 0.3);
   }
 }
