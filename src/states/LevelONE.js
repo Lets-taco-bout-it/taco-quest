@@ -30,6 +30,13 @@ export default class extends Phaser.State {
     this.cat;
     this.guy = {};
     this.isMoving;
+    this.textStyle = {
+      font: "bold 30px Roboto Mono",
+      fontSize: "32px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "4"
+    };
   }
 
   init() {}
@@ -84,17 +91,13 @@ export default class extends Phaser.State {
     this.guy.body.collideWorldBounds = true;
 
     //Lists current this.game state
-    this.game.add.text(0, 0, `${this.game.state.current}`);
 
     //Score and Timer
     this.scoreText = this.game.add.text(
       16,
-      16,
+      0,
       "tacos collected: " + this.score,
-      {
-        fontSize: "32px",
-        fill: "#000"
-      }
+      this.textStyle
     );
     this.scoreText.fixedToCamera = true;
 
@@ -113,12 +116,7 @@ export default class extends Phaser.State {
       this.centerX,
       0,
       `minutes remaining: ${this.clock}`,
-      {
-        font: "bold 30px Roboto Mono",
-        fill: "black",
-        boundsAlignH: "right",
-        boundsAlignV: "top"
-      }
+      this.textStyle
     );
     this.timerText.fixedToCamera = true;
 

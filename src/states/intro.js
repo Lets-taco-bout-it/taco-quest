@@ -2,8 +2,8 @@ import Phaser from "phaser";
 import { switchState } from "../utils";
 
 var content = [
-  "You have been late getting back from lunch every day this week.",
-  "You will be fired if you are late one more time.",
+  "Pete has been late getting back from lunch every day this week.",
+  "Pete will be fired if he is late one more time.",
   "Collect all the tacos and get back to work before the time runs out."
 ];
 
@@ -36,7 +36,9 @@ export default class extends Phaser.State {
     // game.add.image(0, 0, "CityBG");
     text = game.add.text(32, 32, "", {
       font: "25px Roboto Mono",
-      fill: "#777777"
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "4"
     });
 
     this.nextLine();

@@ -39,10 +39,11 @@ export default class extends Phaser.State {
     music.play();
 
     //WELCOME TO TACO QUEST TEXT AND STYLING
-    game.add.text(centerX, 0, `${game.state.current}`);
     var style = {
       font: "bold 50px Roboto Mono",
       fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "6",
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
