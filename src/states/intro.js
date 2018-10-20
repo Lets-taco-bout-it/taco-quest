@@ -2,9 +2,9 @@ import Phaser from "phaser";
 import { switchState } from "../utils";
 
 var content = [
-  "You have been late getting back from lunch every day this week.",
-  "You will be fired if you are late one more time.",
-  "Collect all the tacos and get back to work before the time runs out."
+  "Oh no! You've been late getting back from lunch every day.",
+  "If you're late one more time you'll be fired.",
+  "Hurry and collect the tacos before time runs out!"
 ];
 
 var line = [];

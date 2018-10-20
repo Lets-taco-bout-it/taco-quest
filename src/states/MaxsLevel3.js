@@ -45,7 +45,7 @@ export default class extends Phaser.State {
   }
 
   preload() {
-    game.load.image("city2", "src/assets/cityLevel2.png");
+    game.load.image("city3", "src/assets/cityLevel3.png", 995, 490);
     game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
     // game.load.spritesheet(
     //   "tacocat",
@@ -65,12 +65,13 @@ export default class extends Phaser.State {
   }
 
   create() {
+    // physics.add.collider(groundLayer, player);
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //maxworldbounds
-    game.world.setBounds(0, 0, 2800, 560);
+    game.world.setBounds(0, 0, 2800, 575);
 
     //Background
-    background = game.add.tileSprite(-500, 0, 5000, 1080, "city2");
+    background = game.add.tileSprite(-500, 0, 5000, 1080, "city3");
     background.anchor.setTo(0, 0.51);
     background.scale.setTo(1.5, 1.5);
 
@@ -80,6 +81,7 @@ export default class extends Phaser.State {
     guy.anchor.setTo(0.5, 0.5);
     guy.animations.add("walk", [3, 4, 3, 0]);
     guy.animations.add("jump", [3, 2]);
+    guy.animations.add("crouch", [22, 3]);
     game.camera.follow(guy);
 
     //immunity flag sets if guy can take damage
@@ -102,7 +104,9 @@ export default class extends Phaser.State {
     //Score and Timer
     scoreText = game.add.text(16, 16, "tacos collected: " + this.score, {
       fontSize: "32px",
-      fill: "#000"
+      //change font color here???
+      //   fontColor: "white",
+      fill: "#ffffff"
     });
     scoreText.fixedToCamera = true;
 
@@ -119,7 +123,7 @@ export default class extends Phaser.State {
 
     timerText = game.add.text(centerX, 0, `minutes remaining: ${this.clock}`, {
       font: "bold 30px Roboto Mono",
-      fill: "black",
+      fill: "#ffffff",
       boundsAlignH: "right",
       boundsAlignV: "top"
     });
@@ -203,107 +207,140 @@ export default class extends Phaser.State {
         this
       );
 
-      game.physics.arcade.collide(guy, cats, this.collideCat, null, this);
-      game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
-      game.physics.arcade.overlap(
-        guy,
-        manHoles,
-        this.collideManHole,
-        null,
-        this
-      );
+      {
+        game.physics.arcade.collide(guy, manHole, gameOver, null, this);
+        game.physics.arcade.collide(guy, cats, this.collideCat, null, this);
+        game.physics.arcade.overlap(guy, tacos, this.collectTaco, null, this);
+        game.physics.arcade.overlap(
+          guy,
+          manHoles,
+          this.collideManHole,
+          null,
+          this
+        );
 
-      if (isMoving === true) {
-        //moving background
-        background.tilePosition.x -= 2;
-        trashCans.children.forEach(can => {
-          can.body.velocity.x = -175;
+        if (isMoving === true) {
+          //moving background
+          background.tilePosition.x -= 2;
+          trashCans.children.forEach(can => {
+            can.body.velocity.x = -175;
+          });
+        } else {
+          trashCans.children.forEach(can => {
+            can.body.velocity.x = 0;
+          });
+          manHoles.children.forEach(hole => {
+            hole.body.velocity.x = 0;
+          });
+          guy.body.velocity.x = 0;
+        }
+
+        // if (game.physics.arcade.collide(cats, guy))
+        //TACOCAT
+        // tacocat.x -= speed * 2;
+        // if (tacocat.body.onFloor() === true) {
+        //   tacocat.body.velocity.y = -400;
+        // }
+        //Set Score and win function runs
+        if (this.clock <= 0 && this.score >= 10) {
+          this.win();
+        }
+
+        //autogenerates tacos when tacos.length is < number
+        if (tacos.length < 10) {
+          this.makeTaco();
+        }
+
+        // cat boundaries
+        cats.children.map(cat => {
+          if (cat.body.position.x <= 20) {
+            this.removeCatFromGroup(cat);
+            cat.kill();
+          }
         });
-      } else {
-        trashCans.children.forEach(can => {
-          can.body.velocity.x = 0;
-        });
-        manHoles.children.forEach(hole => {
-          hole.body.velocity.x = 0;
-        });
-        guy.body.velocity.x = 0;
-      }
 
-      // if (game.physics.arcade.collide(cats, guy))
-      //TACOCAT
-      // tacocat.x -= speed * 2;
-      // if (tacocat.body.onFloor() === true) {
-      //   tacocat.body.velocity.y = -400;
-      // }
-      //Set Score and win function runs
-      if (this.clock <= 0 && this.score >= 10) {
-        this.win();
-      }
-
-      //autogenerates tacos when tacos.length is < number
-      if (tacos.length < 10) {
-        this.makeTaco();
-      }
-
-      // cat boundaries
-      cats.children.map(cat => {
-        if (cat.body.position.x <= 20) {
-          this.removeCatFromGroup(cat);
-          cat.kill();
+        //regenerates cats
+        if (cats.length < 8) {
+          this.makeCats();
         }
-      });
 
-      //regenerates cats
-      if (cats.length < 8) {
-        this.makeCats();
-      }
+        //cat speed
+        cats.x -= 5;
 
-      //cat speed
-      cats.x -= 5;
+        //crouch NOT LIKING THIS AT ALL!
+        //   if (guy.body.blocked.down) {
+        //     guy.animatins.stop("duck", 2, true);
+        //   }
 
-      //Jump
-      if (guy.body.blocked.down || guy.body.touching.down) {
-        guy.animations.play("walk", 14, true);
+        //Jump/duck
+        if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN));
+        else if (guy.body.blocked.down || guy.body.touching.down) {
+          guy.animations.play("walk", 14, true);
 
-        if (
-          game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
-          game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
-        ) {
-          guy.animations.stop("walk");
-          guy.animations.play("jump");
-          guy.body.velocity.y = -500;
+          if (
+            game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
+            game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
+          ) {
+            guy.animations.stop("walk");
+            guy.animations.play("jump");
+            guy.animations.play("duck");
+            guy.body.velocity.y = -500;
+          }
+        }
+        //RIGHT, LEFT MOVEMENT
+        if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+          guy.scale.setTo(2, 2);
+          guy.body.velocity.x += speed;
+          if (guy.body.velocity.x > 150) {
+            guy.body.velocity.x = 150;
+          }
+        } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+          guy.scale.setTo(-2, 2);
+          guy.body.velocity.x -= speed * 2;
+          if (guy.body.velocity.x < -150) {
+            guy.body.velocity.x = -150;
+          }
+        } else {
+          guy.body.velocity.x = 0;
+          // guy.animations.stop("jump");
+          // guy.animations.play("walk", 14, true);
         }
       }
-      //RIGHT, LEFT MOVEMENT
-      if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-        guy.scale.setTo(2, 2);
-        guy.body.velocity.x += speed;
-        if (guy.body.velocity.x > 150) {
-          guy.body.velocity.x = 150;
-        }
-      } else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-        guy.scale.setTo(-2, 2);
-        guy.body.velocity.x -= speed * 2;
-        if (guy.body.velocity.x < -150) {
-          guy.body.velocity.x = -150;
-        }
-      } else {
-        guy.body.velocity.x = 0;
-        // guy.animations.stop("jump");
-        // guy.animations.play("walk", 14, true);
+      //SWITCH STATES ON 'S'
+      if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
+        switchState();
+        this.score = 0;
       }
+
+      //delayed level restart after boss fires guy
+      if (restart) setTimeout(this.restartLevel, 2000);
     }
-    //SWITCH STATES ON 'S'
-    if (game.input.keyboard.isDown(Phaser.KeyCode.S)) {
-      switchState();
-      this.score = 0;
+    if (guy.y > game.height || guy.y < 0) {
+      gameOver();
     }
-
-    //delayed level restart after boss fires guy
-    if (restart) setTimeout(this.restartLevel, 2000);
   }
 
   //FUNCTIONS
+
+  //   playerDuck() {
+  //     if (guy.body.touching.down && !guy._inDuck) {
+  //       guy._verticalPosition = guy.y;
+  //       guy._normalHeight = guy.height;
+  //       guy._inDuck = true;
+  //       guy.body.height = 0.75 * guy._normalHeight;
+  //       guy.y = guy.y + guy._normalHeight - guy.body.height;
+  //       guy.frame = 5;
+  //     }
+  //   }
+
+  //   guyUp() {
+  //     if (guy.body.touching.down && guy._inDuck) {
+  //       guy._inDuck = false;
+  //       guy.body.height = guy._normalHeight;
+  //       guy.y = guy._verticalPosition;
+  //       guy.frame = 22;
+  //     }
+  //   }
 
   gameOver() {
     timer.stop();
@@ -339,7 +376,7 @@ export default class extends Phaser.State {
 
   makeTrash() {
     let min = 1000;
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 10; i++) {
       const randomNumber = () => {
         // 200 is the range (plus min)
         const num = Math.random() * 200 + min;
@@ -352,6 +389,7 @@ export default class extends Phaser.State {
       trash = trashCans.create(roll, 470, "trash");
 
       trash.scale.setTo(0.7, 0.7);
+      trash.anchor.setTo(-0.2, -0.2);
       trash.body.velocity.x = -175;
       trash.body.immovable = true;
     }
@@ -359,7 +397,7 @@ export default class extends Phaser.State {
 
   makeManHole() {
     let min = 600;
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 15; i++) {
       const randomNumber = () => {
         // 200 is the range (plus min)
         const num = Math.random() * 350 + min;
@@ -372,7 +410,7 @@ export default class extends Phaser.State {
       manHole = manHoles.create(roll, 550, "manHole");
 
       manHole.scale.setTo(0.3, 0.3);
-      manHole.anchor.setTo(0.5, 0.5);
+      manHole.anchor.setTo(0.3, 0.3);
 
       manHole.body.velocity.x = -175;
       manHole.body.immovable = true;
@@ -388,7 +426,7 @@ export default class extends Phaser.State {
       .start()
 
       .onComplete.add(() => guy.destroy(), this);
-    if (this.clock <= 0 && this.score < 1) {
+    if (this.clock <= 0 && this.score < 10) {
       this.gameOver();
     }
 
