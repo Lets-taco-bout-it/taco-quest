@@ -3,9 +3,9 @@ import "p2";
 import Phaser from "phaser";
 
 import BootState from "./states/Boot";
-import DougState from "./states/DougLevel1";
-import MegLevel1 from "./states/MegLevel1";
-import MaxState from "./states/MaxsLevel1";
+// import DougState from "./states/DougLevel1";
+// import MegLevel1 from "./states/MegLevel1";
+// import MaxState from "./states/MaxsLevel1";
 import LevelONE from "./states/LevelONE";
 import MaxsLevel2 from "./states/MaxsLevel2";
 import HighScore from "./states/HighScore";
@@ -24,9 +24,9 @@ class Game extends Phaser.Game {
 
     this.state.add("Boot", BootState, false);
     this.state.add("intro", introState, false);
-    this.state.add("DougLevel1", DougState, false);
-    this.state.add("MegLevel1", MegLevel1, false);
-    this.state.add("MaxsLevel1", MaxState, false);
+    // this.state.add("DougLevel1", DougState, false);
+    // this.state.add("MegLevel1", MegLevel1, false);
+    // this.state.add("MaxsLevel1", MaxState, false);
     this.state.add("LevelONE", LevelONE, false);
     this.state.add("MaxsLevel2", MaxsLevel2, false);
     this.state.add("HighScore", HighScore, false);
