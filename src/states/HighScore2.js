@@ -27,7 +27,7 @@ export default class extends Phaser.State {
     //gets highscores from table
     axios({
       method: "GET",
-      url: this.BASE_URL + "/api/lvl1"
+      url: this.BASE_URL + "/api/lvl2"
     }).then(res => {
       this.highScores = res.data;
       console.log(this.highScores, "ALLHIGHSCORES");
@@ -90,14 +90,14 @@ export default class extends Phaser.State {
       console.log("button clicked", this.initials);
       axios({
         method: "POST",
-        url: this.BASE_URL + "/api/lvl1",
+        url: this.BASE_URL + "/api/lvl2",
         data: { score: this.score, initials: this.initials }
       }).then(res => {
         console.log(200, "added highscore");
 
         axios({
           method: "GET",
-          url: this.BASE_URL + "/api/lvl1"
+          url: this.BASE_URL + "/api/lvl2"
         }).then(res => {
           this.highScores = res.data;
           console.log(this.highScores, "ALLHIGHSCORES");
@@ -157,7 +157,7 @@ export default class extends Phaser.State {
       boundsAlignH: "center",
       boundsAlignV: "middle"
     };
-    game.add.text(this.centerX - 250, 70, `LEVEL 1 HIGH SCORES`, style);
+    game.add.text(this.centerX - 250, 70, `LEVEL 2 HIGH SCORES`, style);
     this.phaserScores.push(
       game.add.text(
         this.centerX - 100,
