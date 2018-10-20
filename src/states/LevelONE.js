@@ -30,6 +30,16 @@ export default class extends Phaser.State {
     this.cat;
     this.guy = {};
     this.isMoving;
+    this.textStyle = {
+      font: "bold 30px Roboto Mono",
+      fontSize: "32px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "4"
+    };
+    this.winSound;
+    this.sound;
+    this.muteToggleBtn;
   }
 
   init() {}
@@ -52,6 +62,7 @@ export default class extends Phaser.State {
     this.game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
     this.game.load.image("firedBubble", "src/assets/firedBubble.png");
     this.game.load.image("catBubble", "src/assets/catBubble.png");
+    this.game.load.audio("winSound", "src/assets/sounds/winSound.wav");
   }
 
   create() {
@@ -84,17 +95,13 @@ export default class extends Phaser.State {
     this.guy.body.collideWorldBounds = true;
 
     //Lists current this.game state
-    this.game.add.text(0, 0, `${this.game.state.current}`);
 
     //Score and Timer
     this.scoreText = this.game.add.text(
-      16,
-      16,
+      50,
+      0,
       "tacos collected: " + this.score,
-      {
-        fontSize: "32px",
-        fill: "#000"
-      }
+      this.textStyle
     );
     this.scoreText.fixedToCamera = true;
 
@@ -113,12 +120,7 @@ export default class extends Phaser.State {
       this.centerX,
       0,
       `minutes remaining: ${this.clock}`,
-      {
-        font: "bold 30px Roboto Mono",
-        fill: "black",
-        boundsAlignH: "right",
-        boundsAlignV: "top"
-      }
+      this.textStyle
     );
     this.timerText.fixedToCamera = true;
 
@@ -298,6 +300,43 @@ export default class extends Phaser.State {
     if (this.fired === true) {
       this.youreFired();
     }
+
+    //MUTE-UNMUTE TOGGLE BUTTON
+
+    let toggleMute = () => {
+      if (!game.sound.mute) {
+        game.sound.mute = true;
+      } else {
+        game.sound.mute = false;
+      }
+    };
+
+    if (!game.sound.mute) {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        2,
+        0,
+        4,
+        1
+      );
+    } else {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        3,
+        1,
+        5,
+        0
+      );
+    }
+    this.muteToggleBtn.scale.setTo(0.3, 0.3);
   }
 
   //FUNCTIONS
@@ -510,12 +549,17 @@ export default class extends Phaser.State {
   }
   //win screen function
   win() {
+    this.winSound = this.game.add.audio("winSound");
+    this.winSound.play();
+
     this.guy.alive = false;
     this.timer.stop();
     this.game.world.setBounds(0, 0, 2000, 560);
     //create office building at end of world
     this.office = this.game.add.image(1700, -20, "office");
     calculateGameScore.get(this.score);
+    this.game.camera.fade(0x000000, 5000);
+    this.game.camera.onFadeComplete.add(() => switchState(), this);
   }
 
   cameraFade() {
