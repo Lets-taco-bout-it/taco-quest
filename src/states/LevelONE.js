@@ -98,7 +98,7 @@ export default class extends Phaser.State {
 
     //Score and Timer
     this.scoreText = this.game.add.text(
-      16,
+      50,
       0,
       "tacos collected: " + this.score,
       this.textStyle
