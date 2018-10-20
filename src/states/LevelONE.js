@@ -7,7 +7,7 @@ export default class extends Phaser.State {
     this.restart = false;
     this.centerX = 800 / 2;
     this.centerY = 600 / 2;
-    this.clock = 60;
+    this.clock = 10;
     this.score = 0;
     this.speed = 10;
     this.stopBoss = false;
@@ -32,10 +32,7 @@ export default class extends Phaser.State {
     this.isMoving;
   }
 
-  init() {
-    // this.guy.alive = true;
-    // console.log(this.guy);
-  }
+  init() {}
 
   preload() {
     this.game.load.image("CityBG", "src/assets/CityBG.png");
@@ -58,7 +55,6 @@ export default class extends Phaser.State {
   }
 
   create() {
-    // console.log("create");
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     //maxworldbounds
     this.game.world.setBounds(0, 0, 2800, 560);
@@ -343,19 +339,22 @@ export default class extends Phaser.State {
 
     //invokes restartLevel in update function
     this.restart = true;
-    console.log("youre fired");
   }
 
   restartLevel() {
     this.restart = false;
-
     this.clock = 60;
     this.guy.alive = true;
     this.guy.alpha = 1;
     this.boss.visible = false;
+    this.score = 0;
+    this.speed = 10;
+    this.guy.body.velocity.x = 1;
+    this.boss.body.velocity.x = 1;
+    this.stopGuy = false;
+    this.stopBoss = false;
 
-    this.game.state.restart(true, false);
-    console.log("restarting");
+    this.game.state.restart(true, true);
   }
 
   makeTrash() {
@@ -520,7 +519,7 @@ export default class extends Phaser.State {
   }
 
   cameraFade() {
-    this.game.camera.fade(0x000000, 5000);
+    this.game.camera.fade(0x000000, 2000);
     this.game.camera.onFadeComplete.add(this.restartLevel, this);
 
     // switchState();
