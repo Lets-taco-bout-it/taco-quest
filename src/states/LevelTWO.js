@@ -362,7 +362,9 @@ export default class extends Phaser.State {
     this.firedBubble.scale.setTo(0.7);
 
     //invokes restartLevel in update function
-    this.restart = true;
+    this.game.camera.fade(0x000000, 2000);
+    this.game.camera.onFadeComplete.add(this.restartLevel, this);
+    // this.restart = true;
   }
 
   restartLevel() {
@@ -612,13 +614,13 @@ export default class extends Phaser.State {
     //create office building at end of world
     this.office = this.game.add.image(1700, -20, "office");
     calculateGameScore.get(this.score);
+    this.game.camera.fade(0x000000, 5000);
+    this.game.camera.onFadeComplete.add(() => switchState(), this);
   }
 
   cameraFade() {
     this.game.camera.fade(0x000000, 2000);
     this.game.camera.onFadeComplete.add(this.restartLevel, this);
-
-    // switchState();
   }
 
   render() {
