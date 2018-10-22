@@ -63,6 +63,13 @@ export default class extends Phaser.State {
     this.game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
     this.game.load.image("firedBubble", "src/assets/firedBubble.png");
     this.game.load.image("catBubble", "src/assets/catBubble.png");
+    this.game.load.audio("winSound", "src/assets/sounds/winSound.wav");
+    this.game.load.spritesheet(
+      "mute",
+      "src/assets/soundToggleSheet.png",
+      96,
+      96
+    );
   }
 
   create() {
@@ -94,13 +101,10 @@ export default class extends Phaser.State {
     this.guy.body.gravity.y = 800;
     this.guy.body.collideWorldBounds = true;
 
-    //Lists current this.game state
-    this.game.add.text(0, 0, `${this.game.state.current}`);
-
     //Score and Timer
     this.scoreText = this.game.add.text(
-      16,
-      16,
+      50,
+      0,
       "tacos collected: " + this.score + "/10",
       this.textStyle
     );
@@ -327,6 +331,44 @@ export default class extends Phaser.State {
     if (this.fired === true) {
       this.youreFired();
     }
+
+    //MUTE-UNMUTE TOGGLE BUTTON
+
+    let toggleMute = () => {
+      if (!game.sound.mute) {
+        game.sound.mute = true;
+      } else {
+        game.sound.mute = false;
+      }
+    };
+
+    if (!game.sound.mute) {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        2,
+        0,
+        4,
+        1
+      );
+    } else {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        3,
+        1,
+        5,
+        0
+      );
+    }
+    this.muteToggleBtn.scale.setTo(0.3, 0.3);
+    this.muteToggleBtn.fixedToCamera = true;
   }
 
   //FUNCTIONS
@@ -616,6 +658,8 @@ export default class extends Phaser.State {
 
   //win screen function
   win() {
+    this.winSound = this.game.add.audio("winSound");
+    this.winSound.play();
     this.guy.alive = false;
     this.timer.stop();
     this.game.world.setBounds(0, 0, 2000, 560);
@@ -631,13 +675,13 @@ export default class extends Phaser.State {
     this.game.camera.onFadeComplete.add(this.restartLevel, this);
   }
 
-  render() {
-    // if (showDebug)
-    // {
-    // this.game.debug.bodyInfo(this.guy, 32, 32);
-    // this.game.debug.body(this.guy);
-    // this.game.debug.body(this.manHole);
-    // this.game.debug.bodyInfo(this.manHole, 32, 32);
-    // }
-  }
+  // render() {
+  // if (showDebug)
+  // {
+  // this.game.debug.bodyInfo(this.guy, 32, 32);
+  // this.game.debug.body(this.guy);
+  // this.game.debug.body(this.manHole);
+  // this.game.debug.bodyInfo(this.manHole, 32, 32);
+  // }
+  // }
 }
