@@ -32,6 +32,15 @@ export default class extends Phaser.State {
     this.cat;
     this.guy = {};
     this.isMoving;
+    this.textStyle = {
+      font: "bold 30px Roboto Mono",
+      fontSize: "32px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "4"
+    };
+    this.winSound;
+    this.muteToggleBtn;
   }
 
   init() {}
@@ -92,11 +101,8 @@ export default class extends Phaser.State {
     this.scoreText = this.game.add.text(
       16,
       16,
-      "tacos collected: " + this.score,
-      {
-        fontSize: "32px",
-        fill: "#000"
-      }
+      "tacos collected: " + this.score + "/10",
+      this.textStyle
     );
     this.scoreText.fixedToCamera = true;
 
@@ -115,12 +121,7 @@ export default class extends Phaser.State {
       this.centerX,
       0,
       `minutes remaining: ${this.clock}`,
-      {
-        font: "bold 30px Roboto Mono",
-        fill: "black",
-        boundsAlignH: "right",
-        boundsAlignV: "top"
-      }
+      this.textStyle
     );
     this.timerText.fixedToCamera = true;
 
@@ -169,7 +170,7 @@ export default class extends Phaser.State {
   update() {
     if (this.score <= 0) {
       this.score = 0;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
     }
 
     //KILL TIMER PLACEHOLDER if (this.timer === 0) {this.guy.alive = false}
@@ -540,7 +541,7 @@ export default class extends Phaser.State {
       guy.alpha = 0.5;
       cat.alpha = 0.5;
       this.score -= 1;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
 
       //adds cat 'thanks' speech bubble
       this.catBubble = this.game.add.sprite(
@@ -610,7 +611,7 @@ export default class extends Phaser.State {
     this.removeFromGroup(taco);
     //  Add and update the score
     this.score += 1;
-    this.scoreText.text = "tacos collected: " + this.score;
+    this.scoreText.text = "tacos collected: " + this.score + "/10";
   }
 
   //win screen function

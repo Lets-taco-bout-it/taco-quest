@@ -38,7 +38,6 @@ export default class extends Phaser.State {
       strokeThickness: "4"
     };
     this.winSound;
-    this.sound;
     this.muteToggleBtn;
   }
 
@@ -106,7 +105,7 @@ export default class extends Phaser.State {
     this.scoreText = this.game.add.text(
       50,
       0,
-      "tacos collected: " + this.score,
+      "tacos collected: " + this.score + "/10",
       this.textStyle
     );
     this.scoreText.fixedToCamera = true;
@@ -169,7 +168,7 @@ export default class extends Phaser.State {
 
     if (this.score <= 0) {
       this.score = 0;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
     }
 
     //KILL TIMER PLACEHOLDER if (this.timer === 0) {this.guy.alive = false}
@@ -490,7 +489,7 @@ export default class extends Phaser.State {
       guy.alpha = 0.5;
       cat.alpha = 0.5;
       this.score -= 1;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
 
       //adds cat 'thanks' speech bubble
       this.catBubble = this.game.add.sprite(
@@ -560,7 +559,7 @@ export default class extends Phaser.State {
     this.removeFromGroup(taco);
     //  Add and update the score
     this.score += 1;
-    this.scoreText.text = "tacos collected: " + this.score;
+    this.scoreText.text = "tacos collected: " + this.score + "/10";
   }
   //win screen function
   win() {
