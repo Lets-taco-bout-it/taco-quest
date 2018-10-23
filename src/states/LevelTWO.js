@@ -125,7 +125,7 @@ export default class extends Phaser.State {
     this.timerText.fixedToCamera = true;
 
     //boss
-    this.boss = this.game.add.sprite(780, 530, "boss");
+    this.boss = this.game.add.sprite(2800, 530, "boss");
     this.boss.scale.setTo(0.5, 0.5);
     this.boss.anchor.setTo(0.5, 0.5);
     this.game.physics.enable(this.boss);
@@ -313,6 +313,10 @@ export default class extends Phaser.State {
     if (this.stopBoss) {
       this.boss.body.velocity.x = 0;
     }
+    //sets boss position right before the end of game
+    if (this.clock === 2) {
+      this.boss.x = this.guy.x + 700;
+    }
 
     //stops guy from slowly moving forward while boss fires him
     if (this.stopGuy) {
@@ -328,6 +332,9 @@ export default class extends Phaser.State {
 
   gameOver() {
     this.timer.stop();
+    if (this.guy.body.position.x >= 2600) {
+      game.add.tween(this.guy).to({ x: 2400 }, 1000, "Linear", true);
+    }
     this.guy.alive = false;
     this.stopGuy = true;
     this.guy.animations.stop(null, true);
@@ -362,7 +369,9 @@ export default class extends Phaser.State {
     this.firedBubble.scale.setTo(0.7);
 
     //invokes restartLevel in update function
-    this.restart = true;
+    this.game.camera.fade(0x000000, 2000);
+    this.game.camera.onFadeComplete.add(this.restartLevel, this);
+    // this.restart = true;
   }
 
   restartLevel() {
@@ -612,13 +621,13 @@ export default class extends Phaser.State {
     //create office building at end of world
     this.office = this.game.add.image(1700, -20, "office");
     calculateGameScore.get(this.score);
+    this.game.camera.fade(0x000000, 5000);
+    this.game.camera.onFadeComplete.add(() => switchState(), this);
   }
 
   cameraFade() {
     this.game.camera.fade(0x000000, 2000);
     this.game.camera.onFadeComplete.add(this.restartLevel, this);
-
-    // switchState();
   }
 
   render() {
