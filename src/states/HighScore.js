@@ -19,6 +19,7 @@ export default class extends Phaser.State {
     this.submitBtn;
     this.BASE_URL = "http://localhost:4000";
     this.nextButton;
+    this.muteToggleBtn;
   }
 
   init() {
@@ -46,6 +47,7 @@ export default class extends Phaser.State {
       48
     );
     game.load.spritesheet("nextButton", "src/assets/next.png", 96, 96);
+    game.load.spritesheet("mute", "src/assets/soundToggleSheet.png", 96, 96);
   }
   create() {
     this.background = game.add.tileSprite(0, 0, 1920, 1080, "CityBG");
@@ -140,6 +142,44 @@ export default class extends Phaser.State {
       switchState();
       // score = 0;
     }
+
+    //MUTE-UNMUTE TOGGLE BUTTON
+
+    let toggleMute = () => {
+      if (!game.sound.mute) {
+        game.sound.mute = true;
+      } else {
+        game.sound.mute = false;
+      }
+    };
+
+    if (!game.sound.mute) {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        2,
+        0,
+        4,
+        1
+      );
+    } else {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        3,
+        1,
+        5,
+        0
+      );
+    }
+    this.muteToggleBtn.scale.setTo(0.3, 0.3);
+    this.muteToggleBtn.fixedToCamera = true;
   }
 
   //FUNCTIONS
