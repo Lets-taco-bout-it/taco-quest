@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { switchState, calculateGameScore } from "../utils";
-import axios from "../../node_modules/axios";
+import axios from "axios";
 import PhaserInput from "phaser-input";
 
 export default class extends Phaser.State {
@@ -63,7 +63,7 @@ export default class extends Phaser.State {
     };
     game.add.text(60, 0, `Your Score: ${this.score}`, style);
 
-    //INPUT BOX
+    // INPUT BOX
     this.input = game.add.inputField(this.centerX, 15);
     this.inputBox = game.add.inputField(this.centerX, 15, {
       font: "18px Arial",

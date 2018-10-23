@@ -37,6 +37,7 @@
     "webpack": "^3.11.0"
   },
   "dependencies": {
+    "@orange-games/phaser-input": "^2.0.5",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "cordova-android": "^7.0.0",

@@ -71,7 +71,13 @@ module.exports = {
       { test: /pixi\.js/, use: ["expose-loader?PIXI"] },
       { test: /phaser-split\.js$/, use: ["expose-loader?Phaser"] },
       { test: /p2\.js/, use: ["expose-loader?p2"] },
-      { test: /phaser-input\.js$/, use: ["exports-loader?PhaserInput=true"] }
+      //added for phaser-input
+      {
+        test: /phaser\-input\.js$/,
+        use: "exports-loader?PhaserInput=PhaserInput"
+      },
+      { test: /\.ts$/, enforce: "pre", loader: "tslint-loader" },
+      { test: /\.ts$/, loader: "ts-loader" }
     ]
   },
   node: {
@@ -87,7 +93,7 @@ module.exports = {
       p2: p2,
       "phaser-input": path.join(
         __dirname,
-        "node_modules/@orange-games/phaser-input/build/phaser-input.js"
+        "/node_modules/@orange-games/phaser-input/build/phaser-input.js"
       )
     }
   }

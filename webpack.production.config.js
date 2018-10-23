@@ -67,7 +67,14 @@ module.exports = {
       },
       { test: /pixi\.js/, use: ["expose-loader?PIXI"] },
       { test: /phaser-split\.js$/, use: ["expose-loader?Phaser"] },
-      { test: /p2\.js/, use: ["expose-loader?p2"] }
+      { test: /p2\.js/, use: ["expose-loader?p2"] },
+      //added for phaser-input
+      {
+        test: /phaser\-input\.js$/,
+        use: "exports-loader?PhaserInput=PhaserInput"
+      },
+      { test: /\.ts$/, enforce: "pre", loader: "tslint-loader" },
+      { test: /\.ts$/, loader: "ts-loader" }
     ]
   },
   node: {

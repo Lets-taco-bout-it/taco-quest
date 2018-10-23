@@ -612,6 +612,8 @@ export default class extends Phaser.State {
     //create office building at end of world
     this.office = this.game.add.image(1700, -20, "office");
     calculateGameScore.get(this.score);
+    // this.game.camera.fade(0x000000, 5000);
+    // this.game.camera.onFadeComplete.add(() => switchState(), this);
   }
 
   cameraFade() {
