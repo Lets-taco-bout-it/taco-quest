@@ -38,7 +38,6 @@ export default class extends Phaser.State {
       strokeThickness: "4"
     };
     this.winSound;
-    this.sound;
     this.muteToggleBtn;
   }
 
@@ -63,6 +62,12 @@ export default class extends Phaser.State {
     this.game.load.image("firedBubble", "src/assets/firedBubble.png");
     this.game.load.image("catBubble", "src/assets/catBubble.png");
     this.game.load.audio("winSound", "src/assets/sounds/winSound.wav");
+    this.game.load.spritesheet(
+      "mute",
+      "src/assets/soundToggleSheet.png",
+      96,
+      96
+    );
   }
 
   create() {
@@ -100,7 +105,7 @@ export default class extends Phaser.State {
     this.scoreText = this.game.add.text(
       50,
       0,
-      "tacos collected: " + this.score,
+      "tacos collected: " + this.score + "/10",
       this.textStyle
     );
     this.scoreText.fixedToCamera = true;
@@ -125,7 +130,7 @@ export default class extends Phaser.State {
     this.timerText.fixedToCamera = true;
 
     //boss
-    this.boss = this.game.add.sprite(850, 530, "boss");
+    this.boss = this.game.add.sprite(2000, 530, "boss");
     this.boss.scale.setTo(0.5, 0.5);
     this.boss.anchor.setTo(0.5, 0.5);
     this.game.physics.enable(this.boss);
@@ -163,7 +168,7 @@ export default class extends Phaser.State {
 
     if (this.score <= 0) {
       this.score = 0;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
     }
 
     //KILL TIMER PLACEHOLDER if (this.timer === 0) {this.guy.alive = false}
@@ -290,6 +295,10 @@ export default class extends Phaser.State {
     if (this.stopBoss) {
       this.boss.body.velocity.x = 0;
     }
+    //sets boss position right before the end of game
+    if (this.clock === 2) {
+      this.boss.x = this.guy.x + 700;
+    }
 
     //stops guy from slowly moving forward while boss fires him
     if (this.stopGuy) {
@@ -336,12 +345,18 @@ export default class extends Phaser.State {
       );
     }
     this.muteToggleBtn.scale.setTo(0.3, 0.3);
+    this.muteToggleBtn.fixedToCamera = true;
   }
 
   //FUNCTIONS
 
   gameOver() {
     this.timer.stop();
+
+    if (this.guy.body.position.x >= 2600) {
+      game.add.tween(this.guy).to({ x: 2400 }, 1000, "Linear", true);
+    }
+
     this.guy.alive = false;
     this.stopGuy = true;
     this.guy.animations.stop(null, true);
@@ -474,7 +489,7 @@ export default class extends Phaser.State {
       guy.alpha = 0.5;
       cat.alpha = 0.5;
       this.score -= 1;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
 
       //adds cat 'thanks' speech bubble
       this.catBubble = this.game.add.sprite(
@@ -544,7 +559,7 @@ export default class extends Phaser.State {
     this.removeFromGroup(taco);
     //  Add and update the score
     this.score += 1;
-    this.scoreText.text = "tacos collected: " + this.score;
+    this.scoreText.text = "tacos collected: " + this.score + "/10";
   }
   //win screen function
   win() {
@@ -563,10 +578,10 @@ export default class extends Phaser.State {
   }
 
   // render() {
-  //   // if (showDebug)
-  //   // {
-  //   this.game.debug.bodyInfo(guy, 32, 32);
-  //   this.game.debug.body(guy);
-  //   // }
+  //   //   // if (showDebug)
+  //   //   // {
+  //   this.game.debug.bodyInfo(this.boss, 32, 32);
+  //   this.game.debug.body(this.boss);
+  //   //   // }
   // }
 }
