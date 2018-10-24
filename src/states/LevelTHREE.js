@@ -72,7 +72,7 @@ export default class extends Phaser.State {
     this.guy.anchor.setTo(0.5, 0.5);
     this.guy.animations.add("walk", [3, 4, 3, 0]);
     this.guy.animations.add("jump", [3, 2]);
-    this.guy.animations.add("crouch", [21]);
+    this.guy.animations.add("crouch", [5]);
     this.game.camera.follow(this.guy);
 
     //immunity flag sets if guy can take damage
@@ -280,7 +280,7 @@ export default class extends Phaser.State {
     }
     // this.guy.body.velocity.y = 50;   //crouch
     if (this.guy.body.blocked.down || this.guy.body.touching.down) {
-      this.guy.animations.play("crouch", 21, true);
+      this.guy.animations.play("crouch", 5, true);
 
       if (this.game.keyboard.isDown(Phaser.Keyboard.DOWN)) {
         this.guy.animations.play("crouch");
