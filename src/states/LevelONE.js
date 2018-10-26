@@ -69,7 +69,7 @@ export default class extends Phaser.State {
       96,
       96
     );
-    this.game.load.audio("jump", "src/assets/jump.wav");
+    this.game.load.audio("jump", "src/assets/sounds/jump.wav");
   }
 
   create() {
