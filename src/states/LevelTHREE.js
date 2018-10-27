@@ -22,6 +22,8 @@ export default class extends Phaser.State {
     this.trashCans;
     this.manHole;
     this.manHoles;
+    this.sign;
+    this.signs;
     this.office;
     this.scoreText;
     this.taco;
@@ -32,12 +34,22 @@ export default class extends Phaser.State {
     this.cat;
     this.guy = {};
     this.isMoving;
+    this.textStyle = {
+      font: "bold 30px Roboto Mono",
+      fontSize: "32px",
+      fill: "#ffffff",
+      stroke: "#000000",
+      strokeThickness: "4"
+    };
+    this.winSound;
+    this.muteToggleBtn;
   }
 
   init() {}
 
   preload() {
     this.game.load.image("city3", "src/assets/cityLevel3.png", 995, 490);
+
     this.game.load.spritesheet("guy", "src/assets/guy_sheet.png", 32, 32);
 
     this.game.load.image("taco", "src/assets/taco.png");
@@ -50,10 +62,18 @@ export default class extends Phaser.State {
       216
     );
     this.game.load.image("trash", "src/assets/dumpster3.png");
+    this.game.load.image("sign", "src/assets/sign.png");
     this.game.load.image("manHole", "src/assets/manhole.png", 32, 32);
     this.game.load.spritesheet("boss", "src/assets/boss.png", 75, 120);
     this.game.load.image("firedBubble", "src/assets/firedBubble.png");
     this.game.load.image("catBubble", "src/assets/catBubble.png");
+    this.game.load.audio("winSound", "src/assets/sounds/winSound.wav");
+    this.game.load.spritesheet(
+      "mute",
+      "src/assets/soundToggleSheet.png",
+      96,
+      96
+    );
   }
 
   create() {
@@ -86,18 +106,12 @@ export default class extends Phaser.State {
     this.guy.body.gravity.y = 800;
     this.guy.body.collideWorldBounds = true;
 
-    //Lists current this.game state
-    this.game.add.text(0, 0, `${this.game.state.current}`);
-
     //Score and Timer
     this.scoreText = this.game.add.text(
-      16,
-      16,
-      "tacos collected: " + this.score,
-      {
-        fontSize: "32px",
-        fill: "#000"
-      }
+      50,
+      0,
+      "tacos collected: " + this.score + "/10",
+      this.textStyle
     );
     this.scoreText.fixedToCamera = true;
 
@@ -116,12 +130,7 @@ export default class extends Phaser.State {
       this.centerX,
       0,
       `minutes remaining: ${this.clock}`,
-      {
-        font: "bold 30px Roboto Mono",
-        fill: "black",
-        boundsAlignH: "right",
-        boundsAlignV: "top"
-      }
+      this.textStyle
     );
     this.timerText.fixedToCamera = true;
 
@@ -149,6 +158,13 @@ export default class extends Phaser.State {
     this.manHoles.setAll("body.setSize", "body", 30, 30, 20, 20);
     this.makeManHole();
 
+    //sign
+    this.signs = this.game.add.physicsGroup();
+    this.signs.enableBody = true;
+    this.signs.checkWorldBounds = true;
+    this.signs.outOfBoundsKill = true;
+    this.makeSign();
+
     //Tacos
     this.tacos = this.game.add.group();
     this.tacos.enableBody = true;
@@ -170,7 +186,7 @@ export default class extends Phaser.State {
   update() {
     if (this.score <= 0) {
       this.score = 0;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
     }
 
     //KILL TIMER PLACEHOLDER if (this.timer === 0) {this.guy.alive = false}
@@ -197,7 +213,7 @@ export default class extends Phaser.State {
 
     if (this.guy.alive === true) {
       this.isMoving = true;
-
+      this.game.physics.arcade.collide(this.guy, this.signs);
       this.game.physics.arcade.collide(this.guy, this.trashCans);
       this.game.physics.arcade.collide(
         this.guy,
@@ -211,6 +227,7 @@ export default class extends Phaser.State {
         this.guy,
         this.manHoles,
         this.collideManHole,
+
         null,
         this
       );
@@ -239,6 +256,17 @@ export default class extends Phaser.State {
         this.guy.body.velocity.x = 0;
       }
 
+      if (this.isMoving === true) {
+        this.background.tilePosition.x -= 2;
+        this.signs.children.forEach(Sign => {
+          Sign.body.velocity.x = -175;
+        });
+      } else {
+        this.signs.children.forEach(Sign => {
+          Sign.body.velocity.x = 0;
+        });
+      }
+
       //Set Score and win function runs
 
       if (this.clock <= 0 && this.score >= 10) {
@@ -265,6 +293,7 @@ export default class extends Phaser.State {
 
       //cat speed
       this.cats.x -= 5;
+
       //Jump
       if (this.guy.body.blocked.down || this.guy.body.touching.down) {
         this.guy.animations.play("walk", 14, true);
@@ -272,22 +301,22 @@ export default class extends Phaser.State {
         if (
           this.game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
           this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
-        )
+        ) {
           this.guy.animations.stop("walk");
-        this.guy.animations.play("jump");
-        this.guy.body.velocity.y = -500;
+          this.guy.animations.play("jump");
+          this.guy.body.velocity.y = -500;
+        }
       }
-    }
-    // this.guy.body.velocity.y = 50;   //crouch
-    if (this.guy.body.blocked.down || this.guy.body.touching.down) {
-      this.guy.animations.play("crouch", 5, true);
+      //crouch
+      if (this.guy.body.blocked.down || this.guy.body.touching.down) {
+        //   this.guy.animations.play("crouch", 5, true);
 
-      if (this.game.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-        this.guy.animations.play("crouch");
+        if (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
+          this.guy.animations.play("crouch");
+        }
       }
 
       //RIGHT, LEFT MOVEMENT
-
       if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
         this.guy.scale.setTo(2, 2);
         this.guy.body.velocity.x += this.speed;
@@ -335,6 +364,44 @@ export default class extends Phaser.State {
     if (this.fired === true) {
       this.youreFired();
     }
+
+    //MUTE-UNMUTE TOGGLE BUTTON
+
+    let toggleMute = () => {
+      if (!game.sound.mute) {
+        game.sound.mute = true;
+      } else {
+        game.sound.mute = false;
+      }
+    };
+
+    if (!game.sound.mute) {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        2,
+        0,
+        4,
+        1
+      );
+    } else {
+      this.muteToggleBtn = game.add.button(
+        5,
+        5,
+        "mute",
+        toggleMute,
+        this,
+        3,
+        1,
+        5,
+        0
+      );
+    }
+    this.muteToggleBtn.scale.setTo(0.3, 0.3);
+    this.muteToggleBtn.fixedToCamera = true;
   }
 
   //FUNCTIONS
@@ -419,6 +486,45 @@ export default class extends Phaser.State {
     }
   }
 
+  makeSign() {
+    // this.game.debug.body(sign);
+    // this.game.debug.bodyInfo(sign, 32, 32);
+    let min = 1000;
+    for (var i = 0; i < 6; i++) {
+      const randomNumber = () => {
+        const num = Math.random() * 200 + min;
+
+        min += 1450;
+        return num;
+      };
+      let roll = randomNumber();
+
+      this.sign = this.signs.create(roll, 470, "sign");
+
+      this.sign.scale.setTo(0.6, 0.6);
+      this.sign.body.velocity.x = -175;
+      this.sign.body.immovable = true;
+      this.sign.anchor.setTo(1, 1.6);
+
+      this.sign.body.checkCollision.right = true;
+      this.sign.body.checkCollision.top = false;
+      this.sign.body.checkCollision.bottom = true;
+      this.sign.body.checkCollision.left = true;
+    }
+  }
+
+  collideSign(guy, sign) {
+    // this.game.debug.body(sign);
+    // this.game.debug.bodyInfo(sign, 32, 32);
+
+    this.isMoving = false;
+    this.guy.body.velocity.x = 0;
+    sign.body.velocity.x = 0;
+
+    sign.body.enable = false;
+    this.guy.body.enable = false;
+  }
+
   makeManHole() {
     let min = 600;
     for (var i = 0; i < 10; i++) {
@@ -463,32 +569,7 @@ export default class extends Phaser.State {
       .start()
       .onComplete.add(() => this.guy.kill(), this);
     this.cameraFade();
-    // this.gameOver();
-
-    // this.falling = true;
   }
-
-  // collideManHole(guy, manHole) {
-  //   console.log("fell through hole");
-  //   isMoving = false;
-  //   this.add
-  //     .tween(guy.scale)
-  //     .to({ x: 0.3, y: 10 }, 500)
-  //     .start()
-
-  //     .onComplete.add(() => guy.destroy(), this);
-  //   if (this.clock <= 0 && this.score < 1) {
-  //     this.gameOver();
-  //     this.cameraFade();
-  //   }
-
-  //   // this.falling = true;
-  // }
-
-  //   manHoleTween(){
-  //       .tween(guy.)
-  //       .to({x:.3, y:})
-  //   }
 
   makeCats() {
     let min = 700;
@@ -549,7 +630,7 @@ export default class extends Phaser.State {
       guy.alpha = 0.5;
       cat.alpha = 0.5;
       this.score -= 1;
-      this.scoreText.text = "tacos collected: " + this.score;
+      this.scoreText.text = "tacos collected: " + this.score + "/10";
 
       //adds cat 'thanks' speech bubble
       this.catBubble = this.game.add.sprite(
@@ -619,11 +700,13 @@ export default class extends Phaser.State {
     this.removeFromGroup(taco);
     //  Add and update the score
     this.score += 1;
-    this.scoreText.text = "tacos collected: " + this.score;
+    this.scoreText.text = "tacos collected: " + this.score + "/10";
   }
 
   //win screen function
   win() {
+    this.winSound = this.game.add.audio("winSound");
+    this.winSound.play();
     this.guy.alive = false;
     this.timer.stop();
     this.game.world.setBounds(0, 0, 2000, 560);
@@ -639,13 +722,13 @@ export default class extends Phaser.State {
     this.game.camera.onFadeComplete.add(this.restartLevel, this);
   }
 
-  render() {
-    // if (showDebug)
-    // {
-    // this.game.debug.bodyInfo(this.guy, 32, 32);
-    // this.game.debug.body(this.guy);
-    // this.game.debug.body(this.manHole);
-    // this.game.debug.bodyInfo(this.manHole, 32, 32);
-    // }
-  }
+  // render() {
+  // if (showDebug)
+  // {
+  // this.game.debug.bodyInfo(this.guy, 32, 32);
+  // this.game.debug.body(this.guy);
+  // this.game.debug.body(this.manHole);
+  // this.game.debug.bodyInfo(this.manHole, 32, 32);
+  // }
+  // }
 }
