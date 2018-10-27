@@ -9,6 +9,10 @@ var phaserModule = path.join(__dirname, "/node_modules/phaser-ce/");
 var phaser = path.join(phaserModule, "build/custom/phaser-split.js");
 var pixi = path.join(phaserModule, "build/custom/pixi.js");
 var p2 = path.join(phaserModule, "build/custom/p2.js");
+const phaserInput = path.join(
+  __dirname,
+  "/node_modules/@orange-games/phaser-input/build/phaser-input.js"
+);
 
 var definePlugin = new webpack.DefinePlugin({
   __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || "false"))
