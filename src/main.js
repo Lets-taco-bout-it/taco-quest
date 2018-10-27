@@ -3,15 +3,14 @@ import "p2";
 import Phaser from "phaser";
 
 import BootState from "./states/Boot";
-// import DougState from "./states/DougLevel1";
-// import MegLevel1 from "./states/MegLevel1";
-// import MaxState from "./states/MaxsLevel1";
 import LevelONE from "./states/LevelONE";
-import LevelTWO from "./states/LevelTWO";
-// import LevelTHREE from "./states/LevelTHREE";
-import gameOver from "./states/gameOver";
 import HighScore from "./states/HighScore";
+import LevelTWO from "./states/LevelTWO";
 import HighScore2 from "./states/HighScore2";
+
+// import MaxsLevel3 from "./states/MaxsLevel3";
+import LevelTHREE from "./states/LevelTHREE";
+import gameOver from "./states/gameOver";
 
 import config from "./config";
 
@@ -27,15 +26,14 @@ class Game extends Phaser.Game {
 
     this.state.add("Boot", BootState, false);
     this.state.add("intro", introState, false);
-    // this.state.add("DougLevel1", DougState, false);
-    // this.state.add("MegLevel1", MegLevel1, false);
-    // this.state.add("MaxsLevel1", MaxState, false);
+    this.state.add("HighScore", HighScore, false);
     this.state.add("LevelONE", LevelONE, false);
     this.state.add("LevelTWO", LevelTWO, false);
-    // this.state.add("LevelTHREE", LevelTHREE, false);
-    this.state.add("gameOver", gameOver, false);
-    this.state.add("HighScore", HighScore, false);
     this.state.add("HighScore2", HighScore2, false);
+
+    // this.state.add("MaxsLevel3", MaxsLevel3, false);
+    this.state.add("LevelTHREE", LevelTHREE, false);
+    this.state.add("gameOver", gameOver, false);
 
     // with Cordova with need to wait that the device is ready so we will call the Boot state in another file
     if (!window.cordova) {

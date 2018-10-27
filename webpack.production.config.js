@@ -9,6 +9,10 @@ var phaserModule = path.join(__dirname, "/node_modules/phaser-ce/");
 var phaser = path.join(phaserModule, "build/custom/phaser-split.js");
 var pixi = path.join(phaserModule, "build/custom/pixi.js");
 var p2 = path.join(phaserModule, "build/custom/p2.js");
+const phaserInput = path.join(
+  __dirname,
+  "/node_modules/@orange-games/phaser-input/build/phaser-input.js"
+);
 
 var definePlugin = new webpack.DefinePlugin({
   __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || "false"))
@@ -67,7 +71,14 @@ module.exports = {
       },
       { test: /pixi\.js/, use: ["expose-loader?PIXI"] },
       { test: /phaser-split\.js$/, use: ["expose-loader?Phaser"] },
-      { test: /p2\.js/, use: ["expose-loader?p2"] }
+      { test: /p2\.js/, use: ["expose-loader?p2"] },
+      //added for phaser-input
+      {
+        test: /phaser\-input\.js$/,
+        use: "exports-loader?PhaserInput=PhaserInput"
+      },
+      { test: /\.ts$/, enforce: "pre", loader: "tslint-loader" },
+      { test: /\.ts$/, loader: "ts-loader" }
     ]
   },
   node: {

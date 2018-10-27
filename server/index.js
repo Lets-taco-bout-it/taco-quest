@@ -19,6 +19,8 @@ massive(process.env.CONNECTION_STRING, { scripts: path.join(__dirname, "db") })
   })
   .catch(err => console.log(err));
 
+// app.use(express.static(__dirname + '/build'))
+
 //Endpoints
 //Level One
 app.get("/api/lvl1", controller.getLvl1);
