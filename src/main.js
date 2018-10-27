@@ -8,7 +8,7 @@ import BootState from "./states/Boot";
 // import MaxState from "./states/MaxsLevel1";
 import LevelONE from "./states/LevelONE";
 import LevelTWO from "./states/LevelTWO";
-import LevelTHREE from "./states/LevelTHREE";
+// import LevelTHREE from "./states/LevelTHREE";
 import gameOver from "./states/gameOver";
 import HighScore from "./states/HighScore";
 import HighScore2 from "./states/HighScore2";
@@ -32,7 +32,7 @@ class Game extends Phaser.Game {
     // this.state.add("MaxsLevel1", MaxState, false);
     this.state.add("LevelONE", LevelONE, false);
     this.state.add("LevelTWO", LevelTWO, false);
-    this.state.add("LevelTHREE", LevelTHREE, false);
+    // this.state.add("LevelTHREE", LevelTHREE, false);
     this.state.add("gameOver", gameOver, false);
     this.state.add("HighScore", HighScore, false);
     this.state.add("HighScore2", HighScore2, false);

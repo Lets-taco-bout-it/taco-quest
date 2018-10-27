@@ -4,18 +4,74 @@
 <head>
     <meta charset="UTF-8">
     <title>Phaser - ES6 - Webpack</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
     <meta http-equiv="cleartype" content="on">
     <meta name="format-detection" content="telephone=no">
     <style>
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 40px;
+            color: darkslategrey;
+            margin-top: 5px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        }
+
         html,
         body {
+            background-color: #D7D3BE;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin: 0;
-            padding: 0;
+
+
+        }
+
+        footer {
+            font-size: 20px;
+            color: darkslategrey;
+        }
+
+        controls {
+
+            font-size: 20px;
+            color: red;
+
+        }
+
+        credits {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 18px;
+
+        }
+
+        creators {
+            font-size: 20px;
+            color: red;
+        }
+
+        tech {
+            font-size: 20px;
+            color: red;
+        }
+
+        star {
+            color: red;
         }
     </style>
+    <header>
+        TACO QUEST
+
+    </header>
+    <br />
+    <br />
 </head>
 
 <body>
@@ -24,5 +80,32 @@
     <!-- uncomment the line bellow for cordova feature -->
     <!-- <script type="text/javascript" src="cordova.js"></script> -->
 </body>
+
+<footer>
+    <controls>
+        CONTROLS: </controls>Use the arrow keys to navigate your way through the levels. Space or up arrow to jump.
+    <br />
+    <br />
+
+    <credits>
+        <u>
+            <br /> CREDITS:
+        </u>
+    </credits>
+
+    <creators>
+        <br /> CREATORS: </creators>Megan Duclos, Doug Small, Maxson Sayner
+    <br />
+
+    <tech>
+        <br /> TECH: </tech>Phaser, JavaScript, Webpack
+    <br />
+
+    <br />
+    <star>*</star> Special thanks to Spencer Jones, Gabe Meola and Luke Schunk for helping make all this possible.
+
+
+</footer>
+</div>
 
 </html>
