@@ -39,6 +39,7 @@ export default class extends Phaser.State {
     };
     this.winSound;
     this.muteToggleBtn;
+    this.jumpSound;
   }
 
   init() {}
@@ -68,12 +69,16 @@ export default class extends Phaser.State {
       96,
       96
     );
+    this.game.load.audio("jump", "src/assets/sounds/jump.wav");
   }
 
   create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     //maxworldbounds
     this.game.world.setBounds(0, 0, 2800, 560);
+
+    //sound effects
+    this.jumpSound = this.game.add.audio("jump");
 
     //Background
     this.background = this.game.add.tileSprite(-500, 0, 5000, 1080, "CityBG");
@@ -255,6 +260,7 @@ export default class extends Phaser.State {
           this.game.input.keyboard.isDown(Phaser.Keyboard.UP) ||
           this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
         ) {
+          this.jumpSound.play();
           this.guy.animations.stop("walk");
           this.guy.animations.play("jump");
           this.guy.body.velocity.y = -500;
