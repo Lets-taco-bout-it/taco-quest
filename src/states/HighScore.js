@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { switchState, calculateGameScore } from "../utils";
 import axios from "axios";
-import PhaserInput from "phaser-input";
+// import PhaserInput from "phaser-input";
 
 export default class extends Phaser.State {
   constructor() {
@@ -41,7 +41,7 @@ export default class extends Phaser.State {
   preload() {
     console.log("!!!!PRELOAD!!!!!");
     this.game.load.image("CityBG", "src/assets/CityBG.png");
-    this.game.add.plugin(PhaserInput.Plugin);
+    // this.game.add.plugin(PhaserInput.Plugin);
     this.game.load.spritesheet(
       "submitButton",
       "src/assets/achievement_spriteSheet.png",
@@ -74,22 +74,22 @@ export default class extends Phaser.State {
     this.game.add.text(60, 0, `Your Score: ${this.score}`, style);
 
     // INPUT BOX
-    this.input = this.game.add.inputField(this.centerX, 15);
-    this.inputBox = this.game.add.inputField(this.centerX, 15, {
-      font: "18px Arial",
-      fill: "#212121",
-      fontWeight: "bold",
-      stroke: "#000000",
-      strokeThickness: "6",
-      width: 150,
-      padding: 8,
-      borderWidth: 1,
-      borderColor: "#000",
-      borderRadius: 6,
-      placeHolder: "Initials",
-      max: 3,
-      type: PhaserInput.InputType.text
-    });
+    // this.input = this.game.add.inputField(this.centerX, 15);
+    // this.inputBox = this.game.add.inputField(this.centerX, 15, {
+    //   font: "18px Arial",
+    //   fill: "#212121",
+    //   fontWeight: "bold",
+    //   stroke: "#000000",
+    //   strokeThickness: "6",
+    //   width: 150,
+    //   padding: 8,
+    //   borderWidth: 1,
+    //   borderColor: "#000",
+    //   borderRadius: 6,
+    //   placeHolder: "Initials",
+    //   max: 3
+    //   type: PhaserInput.InputType.text
+    // });
     console.log("game score", calculateGameScore.score);
 
     //SUBMIT BUTTON
